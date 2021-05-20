@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[]) {
 
-    auto game = new Game();
+    Game *game = new Game();
 
     while (true) {
 

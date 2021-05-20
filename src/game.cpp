@@ -3,55 +3,96 @@
 //
 
 #include "game.h"
+#include "background.h"
 
 Game::Game() : C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT)) {
 
-    setClearColor(Color::Black);
+    Game::setOrigin(Origin::Bottom);
+    Game::move(Game::getSize().x * 0.5f, Game::getSize().y);
+
     getPhysicsWorld()->SetContactListener(this);
-    getPhysicsWorld()->SetGravity({0, 1});
+    getPhysicsWorld()->SetGravity({0, 10});
 
-    auto floor = new RectangleShape({0, Game::getSize().y - 32, Game::getSize().x, 32});
-    floor->setFillColor(Color::Yellow);
-    floor->addPhysicsBody(b2_staticBody, 0);
-    Game::add(floor);
+    // random generator
+    mt = std::mt19937(std::random_device{}());
+    cube_x = std::uniform_real_distribution<float>((Game::getSize().x / 2) - 100, (Game::getSize().x / 2) + 100);
+    cube_width = std::uniform_real_distribution<float>(CUBE_MIN_WIDTH, CUBE_MAX_WIDTH);
+    cube_height = std::uniform_real_distribution<float>(CUBE_MIN_HEIGHT, CUBE_MAX_HEIGHT);
+    cube_color = std::uniform_real_distribution<float>(0, 255);
 
-    cubeTextureSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "gbatemp.png");
+    // background
+    auto bg = new Background(
+            {Game::getSize().x / 2, Game::getSize().y, Game::getSize().x * 20, Game::getSize().y * 10});
+    bg->setOrigin(Origin::Bottom);
+    Game::add(bg);
+
+    // floor
+    auto floorRect = new RectangleShape({0, Game::getSize().y - 32, Game::getSize().x * 20, 32});
+    //floorRect->setPosition(floorRect->getSize().x / 2, Game::getSize().y - 32);
+    floorRect->setFillColor(Color::GrayDark);
+    floor = floorRect->addPhysicsBody(b2_staticBody, 0);
+    Game::add(floorRect);
+
+    // "camera"
+    cameraScaleTween = new TweenScale(Game::getScale(), {cameraScaleFactor, cameraScaleFactor}, 0.5f);
+    Game::add(cameraScaleTween);
 
     // TODO
     cube = spawnCube();
-
-    // TODO: camera
-    setOrigin(Origin::Bottom);
-    setScale(0.5f, 0.5f);
-    move(getSize().x /2, getSize().y);
+    firstCube = cube->getPhysicsBody();
 }
 
 void Game::BeginContact(b2Contact *contact) {
-    if (contact->GetFixtureA()->GetBody() == cube
-        || contact->GetFixtureB()->GetBody() == cube) {
-        printf("Game::BeginContact\n");
-        needSpawn = true;
+
+    b2Body *b1 = contact->GetFixtureA()->GetBody();
+    b2Body *b2 = contact->GetFixtureB()->GetBody();
+    if (b1 == floor || b2 == floor) {
+        if (b1 != firstCube && b2 != firstCube) {
+            printf("GAME OVER! score: %i\n", cubeCount);
+            setPhysicsPaused(true);
+        }
+    }
+
+    if (cube) {
+        if (contact->GetFixtureA()->GetBody() == cube->getPhysicsBody()
+            || contact->GetFixtureB()->GetBody() == cube->getPhysicsBody()) {
+            printf("Game::BeginContact\n");
+            needSpawn = true;
+        }
     }
 }
 
-b2Body *Game::spawnCube() {
-    auto sprite = new Sprite(cubeTextureSheet);
-    sprite->setPosition(getSize().x / 2, -110);
-    sprite->setSize(100, 100);
-    add(sprite);
+Cube *Game::spawnCube() {
 
-    b2Body *body = sprite->addPhysicsBody();
-    return body;
+    cubeCount++;
+
+    // "camera" zoom
+    if (cube != nullptr) {
+
+        float screenSize = getSize().y / cameraScaleFactor;
+        float screenTop = getSize().y - screenSize;
+        float cameraCenterY = (screenTop + (screenSize / 2)) * cameraScaleFactor;
+        float cubePos = cube->getPosition().y;
+        //printf("size: %f, top: %f, center: %f, cube: %f\n", screenSize, screenTop, cameraCenterY, cubePos);
+
+        if (cubePos < cameraCenterY) {
+            cameraScaleFactor -= 0.1f * ((getSize().y / screenSize) * (cameraScaleFactor * 2));
+            cameraScaleTween->setFromTo(getScale(), {cameraScaleFactor, cameraScaleFactor});
+            cameraScaleTween->play();
+        }
+    }
+
+    float w = cube_width(mt);
+    FloatRect rect = {cube_x(mt) - (w / 2), (getSize().y - (getSize().y / cameraScaleFactor)) - CUBE_MAX_HEIGHT,
+                      w, cube_height(mt)};
+    Color color = {(uint8_t) cube_color(mt), (uint8_t) cube_color(mt), (uint8_t) cube_color(mt)};
+    auto c = new Cube(rect, color);
+    add(c);
+    return c;
 }
 
 void Game::onUpdate() {
 
-    /*
-    if (spawnTimer.getElapsedTime().asSeconds() > spawnDelay) {
-        cube = spawnCube();
-        spawnTimer.restart();
-    }
-    */
     if (needSpawn) {
         cube = spawnCube();
         needSpawn = false;
@@ -63,11 +104,11 @@ void Game::onUpdate() {
 bool Game::onInput(Input::Player *players) {
 
     unsigned int keys = players[0].keys;
-    if (keys != 0) {
+    if (keys != 0 && cube) {
         if (keys & Input::Key::Left) {
-            cube->ApplyForce({-250, 0}, cube->GetWorldCenter(), true);
+            cube->getPhysicsBody()->ApplyForce({-250, 0}, cube->getPhysicsBody()->GetWorldCenter(), true);
         } else if (keys & Input::Key::Right) {
-            cube->ApplyForce({250, 0}, cube->GetWorldCenter(), true);
+            cube->getPhysicsBody()->ApplyForce({250, 0}, cube->getPhysicsBody()->GetWorldCenter(), true);
         }
     }
 
@@ -75,5 +116,4 @@ bool Game::onInput(Input::Player *players) {
 }
 
 Game::~Game() {
-    delete (cubeTextureSheet);
 }
