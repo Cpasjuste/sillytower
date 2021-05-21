@@ -9,11 +9,12 @@ set(PLATFORM_WINDOWS OFF CACHE BOOL "Windows platform target (msys/mingw64)")
 set(PLATFORM_SWITCH OFF CACHE BOOL "Nintendo Switch platform target")
 set(PLATFORM_3DS OFF CACHE BOOL "Nintendo 3DS platform target")
 set(PLATFORM_VITA OFF CACHE BOOL "Sony PS Vita platform target")
-option(PLATFORM_DREAMCAST "Sega Dreamcast platform target" OFF)
+set(PLATFORM_DREAMCAST OFF CACHE BOOL "Sega Dreamcast platform target")
 
 ####################
 # BUILD OPTIONS
 ####################
+set(YOULEAD_KEY OFF CACHE STRING "YouLead Leaderboard Key")
 
 ###################
 # MODULES
@@ -32,15 +33,15 @@ set(PROJECT_AUTHOR "Cpasjuste")
 set(TITLE_ID "STOWE0001")
 
 set(STOWE_INC src)
-file(GLOB STOWE_SRC src/*.c*)
+file(GLOB STOWE_SRC src/*.c* src/leaderboard/*.c*)
 
 set(STOWE_CFLAGS
+        -D__YOULEAD_KEY__="${YOULEAD_KEY}"
         -D__VERSION_MAJOR__=${VERSION_MAJOR}
         -D__VERSION_MINOR__=${VERSION_MINOR}
         )
 
-set(STOWE_LDFLAGS)
-
+set(STOWE_LDFLAGS curl)
 
 #####################
 # PLATORM SPECIFIC

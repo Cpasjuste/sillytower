@@ -2,16 +2,18 @@
 // Created by cpasjuste on 19/05/2021.
 //
 
-#include "game.h"
+#include "main.h"
 #include "background.h"
 
-Game::Game() : C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT)) {
+Game::Game(Renderer *rd) : Rectangle(rd->getSize()) {
+
+    renderer = rd;
 
     Game::setOrigin(Origin::Bottom);
     Game::move(Game::getSize().x * 0.5f, Game::getSize().y);
 
-    getPhysicsWorld()->SetContactListener(this);
-    getPhysicsWorld()->SetGravity({0, 10});
+    renderer->getPhysicsWorld()->SetContactListener(this);
+    renderer->getPhysicsWorld()->SetGravity({0, 10});
 
     // random generator
     mt = std::mt19937(std::random_device{}());
@@ -28,8 +30,8 @@ Game::Game() : C2DRenderer(Vector2f(C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT)) {
 
     // floor
     auto floorRect = new RectangleShape({0, Game::getSize().y - 32, Game::getSize().x * 20, 32});
-    //floorRect->setPosition(floorRect->getSize().x / 2, Game::getSize().y - 32);
-    floorRect->setFillColor(Color::GrayDark);
+    floorRect->setPosition(-(floorRect->getSize().x / 2), Game::getSize().y - 32);
+    floorRect->setFillColor(Color::GrayLight);
     floor = floorRect->addPhysicsBody(b2_staticBody, 0);
     Game::add(floorRect);
 
@@ -49,7 +51,8 @@ void Game::BeginContact(b2Contact *contact) {
     if (b1 == floor || b2 == floor) {
         if (b1 != firstCube && b2 != firstCube) {
             printf("GAME OVER! score: %i\n", cubeCount);
-            setPhysicsPaused(true);
+            renderer->setPhysicsPaused(true);
+            ui->showGameOver();
         }
     }
 
@@ -63,8 +66,6 @@ void Game::BeginContact(b2Contact *contact) {
 }
 
 Cube *Game::spawnCube() {
-
-    cubeCount++;
 
     // "camera" zoom
     if (cube != nullptr) {
@@ -88,6 +89,10 @@ Cube *Game::spawnCube() {
     Color color = {(uint8_t) cube_color(mt), (uint8_t) cube_color(mt), (uint8_t) cube_color(mt)};
     auto c = new Cube(rect, color);
     add(c);
+
+    ui->setScore(cubeCount);
+    cubeCount++;
+
     return c;
 }
 
@@ -98,7 +103,7 @@ void Game::onUpdate() {
         needSpawn = false;
     }
 
-    Renderer::onUpdate();
+    Rectangle::onUpdate();
 }
 
 bool Game::onInput(Input::Player *players) {
@@ -112,7 +117,7 @@ bool Game::onInput(Input::Player *players) {
         }
     }
 
-    return Renderer::onInput(players);
+    return Rectangle::onInput(players);
 }
 
 Game::~Game() {

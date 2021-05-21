@@ -6,7 +6,6 @@
 #define SILLYTOWER_GAME_H
 
 #include <random>
-#include "cross2d/c2d.h"
 #include "cube.h"
 
 #define CUBE_MIN_WIDTH 300
@@ -14,13 +13,11 @@
 #define CUBE_MIN_HEIGHT 100
 #define CUBE_MAX_HEIGHT 120
 
-using namespace c2d;
-
-class Game : public C2DRenderer, b2ContactListener {
+class Game : public Rectangle, b2ContactListener {
 
 public:
 
-    Game();
+    Game(Renderer *renderer);
 
     ~Game() override;
 
@@ -33,6 +30,8 @@ private:
     void onUpdate() override;
 
     bool onInput(Input::Player *players) override;
+
+    Renderer *renderer;
 
     // random
     std::mt19937 mt;
