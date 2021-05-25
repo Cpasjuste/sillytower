@@ -10,7 +10,7 @@ class Score {
 public:
     Score() = default;;
 
-    Score(const std::string &id, const std::string &username, long score, int rank, void *data) {
+    Score(const std::string &id, const std::string &username, long score, int rank, void *data = nullptr) {
         m_id = id;
         m_username = username;
         m_score = score;

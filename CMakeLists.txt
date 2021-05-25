@@ -41,19 +41,16 @@ set(STOWE_CFLAGS
         -D__VERSION_MINOR__=${VERSION_MINOR}
         )
 
-set(STOWE_LDFLAGS curl)
+find_package(CURL REQUIRED)
+set(STOWE_LDFLAGS ${CURL_LIBRARIES})
 
 #####################
 # PLATORM SPECIFIC
 #####################
 if (PLATFORM_SWITCH)
-    #####################
-    # SWITCH PLATORM
-    #####################
+elseif (PLATFORM_VITA)
+    list(APPEND STOWE_LDFLAGS SceAppUtil_stub SceVshBridge_stub -Wl,-q)
 elseif (PLATFORM_LINUX)
-    #####################
-    # LINUX PLATORM
-    #####################
 endif ()
 
 #####################
@@ -63,7 +60,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${STOWE_SRC})
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${STOWE_INC})
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE ${STOWE_CFLAGS})
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
-target_link_libraries(${CMAKE_PROJECT_NAME} cross2d ${STOWE_LDFLAGS})
+target_link_libraries(${CMAKE_PROJECT_NAME} cross2d ssl crypto ${STOWE_LDFLAGS})
 
 #####################
 # targets

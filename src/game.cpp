@@ -13,7 +13,7 @@ Game::Game(Renderer *rd) : Rectangle(rd->getSize()) {
     Game::move(Game::getSize().x * 0.5f, Game::getSize().y);
 
     renderer->getPhysicsWorld()->SetContactListener(this);
-    renderer->getPhysicsWorld()->SetGravity({0, 10});
+    renderer->getPhysicsWorld()->SetGravity({0, -10});
 
     // random generator
     mt = std::mt19937(std::random_device{}());
@@ -67,6 +67,7 @@ void Game::BeginContact(b2Contact *contact) {
 
 Cube *Game::spawnCube() {
 
+    /*
     // "camera" zoom
     if (cube != nullptr) {
 
@@ -77,11 +78,12 @@ Cube *Game::spawnCube() {
         //printf("size: %f, top: %f, center: %f, cube: %f\n", screenSize, screenTop, cameraCenterY, cubePos);
 
         if (cubePos < cameraCenterY) {
-            cameraScaleFactor -= 0.1f * ((getSize().y / screenSize) * (cameraScaleFactor * 2));
+            cameraScaleFactor -= 0.1f * ((getSize().y / screenSize) * (cameraScaleFactor * 3));
             cameraScaleTween->setFromTo(getScale(), {cameraScaleFactor, cameraScaleFactor});
             cameraScaleTween->play();
         }
     }
+    */
 
     float w = cube_width(mt);
     FloatRect rect = {cube_x(mt) - (w / 2), (getSize().y - (getSize().y / cameraScaleFactor)) - CUBE_MAX_HEIGHT,
