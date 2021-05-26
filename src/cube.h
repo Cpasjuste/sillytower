@@ -12,7 +12,7 @@ using namespace c2d;
 class Cube : public RectangleShape {
 
 public:
-    explicit Cube(const FloatRect &rect, const Color &color);
+    explicit Cube(PhysicsWorld *world, const FloatRect &rect, const Color &color);
 
 private:
     void onUpdate() override;

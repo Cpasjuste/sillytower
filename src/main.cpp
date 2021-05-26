@@ -4,32 +4,21 @@
 
 #include "main.h"
 
-Game *game;
-Ui *ui;
-YouLead *leaderboard;
-
 int main(int argc, char *argv[]) {
 
-    auto renderer = new C2DRenderer({C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT});
-
-    leaderboard = new YouLead();
-    ui = new Ui(renderer);
-    game = new Game(renderer);
-    renderer->add(game);
-    renderer->add(ui);
+    auto *game = new Game({960, 544});
 
     while (true) {
 
-        unsigned int keys = renderer->getInput()->getKeys();
+        unsigned int keys = game->getInput()->getKeys();
         if (keys & EV_QUIT) {
             break;
         }
 
-        renderer->flip();
+        game->flip();
     }
 
-    delete (leaderboard);
-    delete (renderer);
+    delete (game);
 
     return 0;
 }

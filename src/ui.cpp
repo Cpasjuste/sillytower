@@ -8,20 +8,20 @@ Ui::Ui(Renderer *renderer) : Rectangle(renderer->getSize()) {
 
     font = new Font();
     font->loadFromFile(renderer->getIo()->getRomFsPath() + "font.ttf");
-    font->setOffset({0, -4});
+    font->setOffset({0, -6});
 
     scoreText = new Text("SCORE: 0", C2D_DEFAULT_CHAR_SIZE, font);
-    scoreText->setPosition(8, 8);
-    scoreText->setFillColor(Color::Yellow);
-    scoreText->setOutlineThickness(2);
+    scoreText->setPosition(4, 4);
+    scoreText->setFillColor(Color::GrayLight);
+    scoreText->setOutlineThickness(1);
     scoreText->setOutlineColor(Color::Black);
     Ui::add(scoreText);
 
     gameOverText = new Text("GAME OVER", 64, font);
-    gameOverText->setOrigin(Origin::Center);
-    gameOverText->setPosition(Ui::getSize().x / 2, Ui::getSize().y / 2);
-    gameOverText->setFillColor(Color::Yellow);
-    gameOverText->setOutlineThickness(3);
+    gameOverText->setOrigin(Origin::Top);
+    gameOverText->setPosition(Ui::getSize().x / 2, 32);
+    gameOverText->setFillColor(Color::GrayLight);
+    gameOverText->setOutlineThickness(2);
     gameOverText->setOutlineColor(Color::Black);
     gameOverText->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
     gameOverText->setVisibility(Visibility::Hidden);
@@ -40,6 +40,13 @@ void Ui::showGameOver() {
     }
 }
 
+void Ui::hideGameOver() {
+    if (gameOverText) {
+        gameOverText->setVisibility(Visibility::Hidden, true);
+    }
+}
+
 Ui::~Ui() {
     delete (font);
 }
+

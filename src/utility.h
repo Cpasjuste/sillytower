@@ -5,17 +5,23 @@
 #ifndef SILLYTOWER_UTILITY_H
 #define SILLYTOWER_UTILITY_H
 
+#include "cross2d/c2d.h"
 #include <string>
 #include <vector>
 
-class Utility {
+namespace sillytower {
 
-public:
-    static std::vector<std::string> split(const std::string &str, const std::string &delimiter);
+    class Utility {
 
-    static std::string base64_encode(const void *data, size_t len);
+    public:
+        static c2d::IntRect getTextureRect(c2d::Texture *texture, int rows, int x, int y);
 
-    static std::string base64_decode(const void *data, size_t len);
-};
+        static std::vector<std::string> split(const std::string &str, const std::string &delimiter);
+
+        static std::string base64_encode(const void *data, size_t len);
+
+        static std::string base64_decode(const void *data, size_t len);
+    };
+}
 
 #endif //SILLYTOWER_UTILITY_H

@@ -20,6 +20,8 @@ public:
 
     void showGameOver();
 
+    void hideGameOver();
+
 private:
     Font *font = nullptr;
     Text *scoreText = nullptr;

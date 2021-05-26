@@ -27,6 +27,10 @@ public:
     Score addScore(const std::string &id, const std::string &username, const std::string &password,
                    long score, int order = 0, bool overwrite = false) const;
 
+    std::vector<Score> getTopScores() const {
+        return m_topScores;
+    }
+
 private:
     CURL *m_curl = nullptr;
     std::string m_key = __YOULEAD_KEY__;
@@ -35,6 +39,9 @@ private:
     std::string m_id = "top";
     User m_user;
     bool m_available = true;
+
+    //
+    std::vector<Score> m_topScores;
 };
 
 #endif //SILLYTOWER_YOULEAD_H

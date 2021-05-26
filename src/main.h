@@ -12,8 +12,8 @@
 
 using namespace c2d;
 
-extern Game *game;
-extern Ui *ui;
-extern YouLead *leaderboard;
+//extern Game *game;
+//extern Ui *ui;
+//extern YouLead *leaderboard;
 
 #endif //SILLYTOWER_MAIN_H

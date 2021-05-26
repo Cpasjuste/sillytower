@@ -56,6 +56,13 @@ YouLead::YouLead() {
 
     curl_global_init(CURL_GLOBAL_ALL);
     m_curl = curl_easy_init();
+
+    // get top
+    m_topScores = getScores(m_id, 0, 0, 2);
+    for (auto &score : m_topScores) {
+        printf("top scores: %i: %s with %li points\n",
+               score.getRank(), score.getUsername().c_str(), score.getScore());
+    }
 }
 
 User YouLead::getLocalUser() const {
@@ -88,10 +95,10 @@ Score YouLead::getScore(const std::string &id, const std::string &username, int 
         return score;
     }
 
-    std::vector<std::string> tokens = Utility::split(readBuffer, "<br>");
+    std::vector<std::string> tokens = sillytower::Utility::split(readBuffer, "<br>");
     if (tokens.size() == 2 && tokens.at(0) == "YL_OK") {
-        std::string decoded = Utility::base64_decode(tokens.at(1).c_str(), tokens.at(1).size());
-        std::vector<std::string> scoreTokens = Utility::split(decoded, "|n|");
+        std::string decoded = sillytower::Utility::base64_decode(tokens.at(1).c_str(), tokens.at(1).size());
+        std::vector<std::string> scoreTokens = sillytower::Utility::split(decoded, "|n|");
         if (scoreTokens.size() == 5) {
             return Score(id, scoreTokens.at(0), std::stol(scoreTokens.at(1)), std::stoi(scoreTokens.at(2)));
         }
@@ -129,11 +136,11 @@ std::vector<Score> YouLead::getScores(const std::string &id, int order, int limi
         return std::vector<Score>();
     }
 
-    std::vector<std::string> tokens = Utility::split(readBuffer, "<br>");
+    std::vector<std::string> tokens = sillytower::Utility::split(readBuffer, "<br>");
     if (tokens.size() > 1 && tokens.at(0) == "YL_OK") {
         for (size_t i = 1; i < tokens.size(); i++) {
-            std::string decoded = Utility::base64_decode(tokens.at(i).c_str(), tokens.at(i).size());
-            std::vector<std::string> scoreTokens = Utility::split(decoded, "|n|");
+            std::string decoded = sillytower::Utility::base64_decode(tokens.at(i).c_str(), tokens.at(i).size());
+            std::vector<std::string> scoreTokens = sillytower::Utility::split(decoded, "|n|");
             if (scoreTokens.size() == 5) {
                 scores.emplace_back(id, scoreTokens.at(0),
                                     std::stol(scoreTokens.at(1)),
@@ -166,7 +173,7 @@ Score YouLead::addScore(const std::string &id, const std::string &username, cons
     data += password + "|n|";
     data += std::to_string(_score) + "|n|";
     data += std::to_string((int) overwrite) + "|n|";
-    encoded = Utility::base64_encode(data.c_str(), data.size());
+    encoded = sillytower::Utility::base64_encode(data.c_str(), data.size());
     // md5
     MD5((unsigned char *) (encoded + m_key).c_str(), (encoded + m_key).size(), md5);
     for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
@@ -190,10 +197,10 @@ Score YouLead::addScore(const std::string &id, const std::string &username, cons
     }
 
     //printf("%s\n", readBuffer.c_str());
-    std::vector<std::string> tokens = Utility::split(readBuffer, "<br>");
+    std::vector<std::string> tokens = sillytower::Utility::split(readBuffer, "<br>");
     if (tokens.size() == 2 && tokens.at(0) == "YL_OK") {
-        std::string decoded = Utility::base64_decode(tokens.at(1).c_str(), tokens.at(1).size());
-        std::vector<std::string> scoreTokens = Utility::split(decoded, "|n|");
+        std::string decoded = sillytower::Utility::base64_decode(tokens.at(1).c_str(), tokens.at(1).size());
+        std::vector<std::string> scoreTokens = sillytower::Utility::split(decoded, "|n|");
         if (scoreTokens.size() == 5) {
             return Score(id, scoreTokens.at(0), std::stol(scoreTokens.at(1)), std::stoi(scoreTokens.at(2)));
         }

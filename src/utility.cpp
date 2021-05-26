@@ -2,7 +2,16 @@
 // Created by cpasjuste on 25/05/2021.
 //
 
+#include "cross2d/c2d.h"
 #include "utility.h"
+
+using namespace sillytower;
+
+c2d::IntRect Utility::getTextureRect(c2d::Texture *texture, int rows, int x, int y) {
+    int width = (int) texture->getSize().x / rows;
+    int height = (int) texture->getSize().y / rows;
+    return {width * x, height * y, width, height};
+}
 
 std::vector<std::string> Utility::split(const std::string &str, const std::string &delimiter) {
 
