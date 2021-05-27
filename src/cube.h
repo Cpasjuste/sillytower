@@ -14,8 +14,14 @@ class Cube : public RectangleShape {
 public:
     explicit Cube(PhysicsWorld *world, const FloatRect &rect, const Color &color);
 
+    void playTween();
+
+    void stopTween();
+
 private:
     void onUpdate() override;
+
+    TweenColor *tweenColor = nullptr;
 };
 
 #endif //SILLYTOWER_CUBE_H

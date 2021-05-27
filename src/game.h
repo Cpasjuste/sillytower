@@ -15,6 +15,8 @@
 #define CUBE_MAX_WIDTH 300
 #define CUBE_MIN_HEIGHT 100
 #define CUBE_MAX_HEIGHT 100
+#define CLOUD_MAX 20
+#define STATIC_CUBE_MULTIPLIER 20
 
 class Game : public C2DRenderer, b2ContactListener {
 
@@ -25,8 +27,6 @@ public:
     ~Game() override;
 
     Cube *spawnCube(float y = 0);
-
-    void spawnCloud();
 
     void BeginContact(b2Contact *contact) override;
 
@@ -69,7 +69,7 @@ private:
     bool needSpawn = false;
 
     // camera
-    TweenScale *cameraScaleTween = nullptr;
+    TweenScale *cameraScaleTween;
 };
 
 #endif //SILLYTOWER_GAME_H

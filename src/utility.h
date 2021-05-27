@@ -9,12 +9,14 @@
 #include <string>
 #include <vector>
 
-namespace sillytower {
+namespace st {
 
     class Utility {
 
     public:
         static c2d::IntRect getTextureRect(c2d::Texture *texture, int rows, int x, int y);
+
+        static bool isMultipleOf(int n, int multiple);
 
         static std::vector<std::string> split(const std::string &str, const std::string &delimiter);
 

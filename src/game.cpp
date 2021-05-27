@@ -6,20 +6,15 @@
 #include "game.h"
 #include "background.h"
 #include "cloud.h"
+#include "utility.h"
 
 Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
     // TODO: use c++ generators and distributions (used for clouds)
-    srand(static_cast <unsigned> (time(0)));
+    srand(static_cast <unsigned> (time(nullptr)));
 
     // leaderboards !
     leaderboard = new YouLead();
-
-    // background
-    auto bg = new Background(
-            {Game::getSize().x / 2, Game::getSize().y, Game::getSize().x * 20, Game::getSize().y * 10});
-    bg->setOrigin(Origin::Bottom);
-    Game::add(bg);
 
     // sprites
     spriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "spritesheet.png");
@@ -30,12 +25,19 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     gameView->setPosition(Game::getSize().x / 2, Game::getSize().y);
     Game::add(gameView);
 
-    // TODO: clouds
-    auto cloud = new Cloud(this);
-    gameView->add(cloud);
+    // background
+    auto bg = new Background({Game::getSize().x / 2, Game::getSize().y,
+                              Game::getSize().x * 20, Game::getSize().y * 10});
+    bg->setOrigin(Origin::Bottom);
+    gameView->add(bg);
+
+    // clouds
+    for (int i = 0; i < CLOUD_MAX; i++) {
+        gameView->add(new Cloud(this));
+    }
 
     // create physics world and add it to the game view
-    world = new PhysicsWorld({0, -10});
+    world = new PhysicsWorld({0, -5});
     world->getPhysics()->SetContactListener(this);
     gameView->add(world);
 
@@ -60,7 +62,7 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     cube_x = std::uniform_real_distribution<float>((Game::getSize().x / 2) - 100, (Game::getSize().x / 2) + 100);
     cube_width = std::uniform_real_distribution<float>(CUBE_MIN_WIDTH, CUBE_MAX_WIDTH);
     cube_height = std::uniform_real_distribution<float>(CUBE_MIN_HEIGHT, CUBE_MAX_HEIGHT);
-    cube_color = std::uniform_real_distribution<float>(0, 255);
+    cube_color = std::uniform_real_distribution<float>(100, 255);
 
     // TODO: start game (ui)
     cube = spawnCube();
@@ -87,7 +89,8 @@ void Game::BeginContact(b2Contact *contact) {
     if (cube) {
         if (contact->GetFixtureA()->GetBody() == cube->getPhysicsBody()
             || contact->GetFixtureB()->GetBody() == cube->getPhysicsBody()) {
-            printf("Game::BeginContact\n");
+            //printf("Game::BeginContact\n");
+            cube->getPhysicsBody()->SetGravityScale(2);
             needSpawn = true;
         }
     }
@@ -96,15 +99,18 @@ void Game::BeginContact(b2Contact *contact) {
 Cube *Game::spawnCube(float y) {
 
     // "camera" zoom
-    if (cube && cameraScaleTween) {
+    if (cube) {
         float screenTop = getSize().y / gameView->getScale().y;
-        float maxHeight = screenTop - (6 * CUBE_MAX_HEIGHT);
-        //printf("cube: %f, top: %f, center: %f, maxHeight: %f\n",
-        //     cube->getPosition().y, screenTop, screenCenter, maxHeight);
+        float maxHeight = screenTop - (5 * CUBE_MAX_HEIGHT);
         if (cube->getPosition().y > maxHeight) {
             float scaling = gameView->getScale().y - (0.1f * gameView->getScale().y);
             cameraScaleTween->setFromTo(gameView->getScale(), {scaling, scaling});
             cameraScaleTween->play();
+        }
+        // set cube to static every 20 cubes
+        if (st::Utility::isMultipleOf(cubeCount, STATIC_CUBE_MULTIPLIER)) {
+            cube->stopTween();
+            cube->getPhysicsBody()->SetType(b2_staticBody);
         }
     }
 
@@ -117,21 +123,18 @@ Cube *Game::spawnCube(float y) {
     cubes.push_back(c);
     cubeCount++;
 
+    if (cube) {
+        // set cube to static every 20 cubes
+        if (st::Utility::isMultipleOf(cubeCount, STATIC_CUBE_MULTIPLIER)) {
+            c->playTween();
+        }
+    }
+
     if (ui) {
         ui->setScore(cubeCount);
     }
 
     return c;
-}
-
-void Game::spawnCloud() {
-
-    /*
-    auto *sprite = new Sprite(spriteTex, getTextureRect(spriteTex, 0));
-    sprite->setOrigin(Origin::Center);
-    sprite->setPosition(getSize().x / 2, getSize().y / 2);
-    add(sprite);
-    */
 }
 
 void Game::onUpdate() {
@@ -147,7 +150,8 @@ void Game::onUpdate() {
 bool Game::onInput(Input::Player *players) {
 
     unsigned int keys = players[0].keys;
-    if (keys != 0 && cube) {
+    if (cube) {
+        // TODO: reset game with button
         if (world->isPaused()) {
             for (auto c : cubes) {
                 delete (c);
@@ -164,9 +168,9 @@ bool Game::onInput(Input::Player *players) {
             world->setPaused(false);
         } else {
             if (keys & Input::Key::Left) {
-                cube->getPhysicsBody()->ApplyForce({-500, 0}, cube->getPhysicsBody()->GetWorldCenter(), true);
+                cube->getPhysicsBody()->ApplyForce({-600, 0}, cube->getPhysicsBody()->GetWorldCenter(), true);
             } else if (keys & Input::Key::Right) {
-                cube->getPhysicsBody()->ApplyForce({500, 0}, cube->getPhysicsBody()->GetWorldCenter(), true);
+                cube->getPhysicsBody()->ApplyForce({600, 0}, cube->getPhysicsBody()->GetWorldCenter(), true);
             }
         }
     }

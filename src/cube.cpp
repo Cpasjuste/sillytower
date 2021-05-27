@@ -11,6 +11,21 @@ Cube::Cube(PhysicsWorld *world, const FloatRect &rect, const Color &color) : Rec
     Cube::addPhysicsBody(world);
 }
 
+void Cube::playTween() {
+    if (!tweenColor) {
+        tweenColor = new TweenColor(getFillColor(), Color::GrayLight, 0.5f, TweenLoop::PingPong);
+        Cube::add(tweenColor);
+    }
+    tweenColor->play();
+}
+
+void Cube::stopTween() {
+    if (tweenColor) {
+        tweenColor->setState(TweenState::Stopped);
+        setFillColor(Color::GrayLight);
+    }
+}
+
 void Cube::onUpdate() {
 
     if (getRotation() > 15) {

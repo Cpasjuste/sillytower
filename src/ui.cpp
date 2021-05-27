@@ -24,6 +24,7 @@ Ui::Ui(Renderer *renderer) : Rectangle(renderer->getSize()) {
     gameOverText->setOutlineThickness(2);
     gameOverText->setOutlineColor(Color::Black);
     gameOverText->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
+    gameOverText->add(new TweenColor(gameOverText->getFillColor(), Color::Yellow, 1, TweenLoop::PingPong));
     gameOverText->setVisibility(Visibility::Hidden);
     Ui::add(gameOverText);
 }

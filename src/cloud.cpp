@@ -10,38 +10,42 @@
 Cloud::Cloud(Game *game) : Sprite() {
     m_game = game;
     setTexture(m_game->getSpriteSheet());
-    setTextureRect(sillytower::Utility::getTextureRect(getTexture(), 4, 0, 0));
+    setTextureRect(st::Utility::getTextureRect(getTexture(), 4, rand() % 4, 0));
+    Cloud::setScale(2, 2);
     Cloud::setOrigin(Origin::Center);
-
-    float x = ((float) rand() / (float) (RAND_MAX)) * m_game->getSize().x;
-    float y = ((float) rand() / (float) (RAND_MAX)) * (m_game->getSize().y / 2);
-    Cloud::setPosition(x, y);
+    reset();
 }
 
 void Cloud::reset() {
     // speed 0.1f <> 0.5f
-    m_speed = 0.1f + (float) rand() / ((float) RAND_MAX / (0.5f - 0.1f));
+    m_speed = 1.0f + (float) rand() / ((float) RAND_MAX / (3.0f - 1.0f));
 
-    //float screenTop = getSize().y / gameView->getScale().y;
-    float x = (m_game->getGameView()->getSize().x * m_game->getGameView()->getScale().x) * -1;
-            // (-(m_game->getGameView()->getSize().x / 2) / m_game->getGameView()->getScale().x) + 128;
+    // position (x)
+    float width = m_game->getGameView()->getSize().x;
+    float scale = m_game->getGameView()->getScale().x;
+    float extend = (width / scale) - width;
+    float x = -((extend / 2) + getSize().x);
+    // position (y)
+    float height = m_game->getGameView()->getSize().y;
+    float min = -(height * 3);
+    float max = min - (height * 3);
+    float y = min + (float) rand() / ((float) RAND_MAX / (max - min));
+    //printf("min: %f, max: %f, y: %f\n", min, max, y);
 
-    float y = ((float) rand() / (float) (RAND_MAX)) *
-              ((m_game->getGameView()->getSize().y / 2) * m_game->getGameView()->getScale().x);
     Cloud::setPosition(x, y);
-
-    printf("Cloud::reset: speed: %f, x: %f, y: %f\n", m_speed, x, y);
+    setTextureRect(st::Utility::getTextureRect(getTexture(), 4, rand() % 4, 0));
 }
 
 void Cloud::onUpdate() {
 
-    move(5, 0);
+    move(m_speed, 0);
 
-
-    if (getPosition().x > m_game->getGameView()->getSize().x * m_game->getGameView()->getScale().x) {
+    float width = m_game->getGameView()->getSize().x;
+    float scale = m_game->getGameView()->getScale().x;
+    float screenRight = (((width / scale) - width) / 2) + width;
+    if (getPosition().x > screenRight + getSize().x) {
         reset();
     }
 
     Sprite::onUpdate();
 }
-

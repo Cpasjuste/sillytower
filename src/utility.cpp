@@ -5,7 +5,7 @@
 #include "cross2d/c2d.h"
 #include "utility.h"
 
-using namespace sillytower;
+using namespace st;
 
 c2d::IntRect Utility::getTextureRect(c2d::Texture *texture, int rows, int x, int y) {
     int width = (int) texture->getSize().x / rows;
@@ -102,4 +102,13 @@ std::string Utility::base64_decode(const void *data, size_t len) {
         }
     }
     return str;
+}
+
+bool Utility::isMultipleOf(int n, int multiple) {
+    while (n > 0)
+        n = n - multiple;
+    if (n == 0)
+        return true;
+
+    return false;
 }
