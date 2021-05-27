@@ -9,6 +9,9 @@
 
 Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
+    // TODO: use c++ generators and distributions (used for clouds)
+    srand(static_cast <unsigned> (time(0)));
+
     // leaderboards !
     leaderboard = new YouLead();
 
