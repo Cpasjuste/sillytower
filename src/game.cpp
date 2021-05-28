@@ -91,14 +91,13 @@ void Game::start() {
 
 void Game::BeginContact(b2Contact *contact) {
 
-    /*
-    // TODO: debug
+#if 0
+    // DEBUG
     printf("GAME OVER! score: %i\n", cubeCount);
     world->setPaused(true);
     ui->showGameOver();
     return;
-    */
-
+#endif
     b2Body *b1 = contact->GetFixtureA()->GetBody();
     b2Body *b2 = contact->GetFixtureB()->GetBody();
     if (b1 == floor || b2 == floor) {

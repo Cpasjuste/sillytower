@@ -29,15 +29,15 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
 
     gameOverText = new Text("... GAME OVER ...", C2D_DEFAULT_CHAR_SIZE, font);
     gameOverText->setOrigin(Origin::Center);
-    gameOverText->setPosition(Ui::getSize().x / 2, 75);
+    gameOverText->setPosition(Ui::getSize().x / 2, 32);
     gameOverText->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
     gameOverText->add(new TweenColor(gameOverText->getFillColor(), Color::Yellow, 1, TweenLoop::PingPong));
     gameOverText->setVisibility(Visibility::Hidden);
     Ui::add(gameOverText);
 
-    topPlayers = new UiTopPlayers(m_game, this, {0, 0, 400, 64 * 4});
+    topPlayers = new UiTopPlayers(m_game, this, {0, 0, 400, 64 * 3});
     topPlayers->setOrigin(Origin::Center);
-    topPlayers->setPosition(Ui::getSize().x / 2, Ui::getSize().y / 2);
+    topPlayers->setPosition(Ui::getSize().x / 2, Ui::getSize().y / 1.70f);
     topPlayers->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
     topPlayers->setVisibility(Visibility::Hidden);
     Ui::add(topPlayers);

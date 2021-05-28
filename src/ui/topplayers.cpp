@@ -11,48 +11,60 @@ UiTopPlayers::UiTopPlayers(Game *game, Ui *ui, const FloatRect &rect) : Rectangl
     UiTopPlayers::setOutlineColor(Color::Black);
     UiTopPlayers::setOutlineThickness(2);
 
-    // top scores items
-    cupTex = new C2DTexture(game->getIo()->getRomFsPath() + "cup.png");
-    float itemHeight = rect.height / 4;
-    // 0
-    auto *item = new ScoreItem(ui, {0, 0, rect.width, itemHeight}, cupTex,
+    Text *title = new Text("TOP SCORES", C2D_DEFAULT_CHAR_SIZE, ui->getFont());
+    title->setOrigin(Origin::BottomRight);
+    title->setPosition(rect.width - 8, 1);
+    UiTopPlayers::add(title);
+
+    // scores items
+    m_cupTex = new C2DTexture(game->getIo()->getRomFsPath() + "cup.png");
+    float itemHeight = rect.height / 3;
+    // my score item
+    m_myScore = new ScoreItem(ui, {0, -(itemHeight * 1.75f), rect.width, itemHeight}, m_cupTex,
+                              {254, 225, 1}, game->getColor(Game::SillyColor::yellow));
+    m_myScore->setOutlineColor(Color::Black);
+    m_myScore->setOutlineThickness(2);
+    m_myScore->rank->setVisibility(Visibility::Visible);
+    m_myScore->cupSprite->setVisibility(Visibility::Hidden);
+    Text *myScoreTitle = new Text("MY BEST SCORE", C2D_DEFAULT_CHAR_SIZE, ui->getFont());
+    myScoreTitle->setOrigin(Origin::BottomRight);
+    myScoreTitle->setPosition(m_myScore->getSize().x - 8, 1);
+    m_myScore->add(myScoreTitle);
+    UiTopPlayers::add(m_myScore);
+    // top scores item
+    // 1
+    auto *item = new ScoreItem(ui, {0, 0, rect.width, itemHeight}, m_cupTex,
                                {254, 225, 1}, game->getColor(Game::SillyColor::blue));
     UiTopPlayers::add(item);
-    scores.push_back(item);
-    // 1
-    item = new ScoreItem(ui, {0, itemHeight, rect.width, itemHeight}, cupTex,
+    m_topScores.push_back(item);
+    // 2
+    item = new ScoreItem(ui, {0, itemHeight, rect.width, itemHeight}, m_cupTex,
                          {167, 167, 173}, game->getColor(Game::SillyColor::magenta));
     UiTopPlayers::add(item);
-    scores.push_back(item);
-    // 2
-    item = new ScoreItem(ui, {0, itemHeight * 2, rect.width, itemHeight}, cupTex,
+    m_topScores.push_back(item);
+    // 3
+    item = new ScoreItem(ui, {0, itemHeight * 2, rect.width, itemHeight}, m_cupTex,
                          {167, 112, 68}, game->getColor(Game::SillyColor::green));
     UiTopPlayers::add(item);
-    scores.push_back(item);
-    // 3
-    item = new ScoreItem(ui, {0, itemHeight * 3, rect.width, itemHeight}, cupTex,
-                         Color::White, game->getColor(Game::SillyColor::yellow));
-    UiTopPlayers::add(item);
-    scores.push_back(item);
+    m_topScores.push_back(item);
 }
 
 void UiTopPlayers::setTopScores(const std::vector<Score> &topScores, const Score &myScore) {
     // top scores
     for (size_t i = 0; i < topScores.size(); i++) {
         std::string upper = c2d::Utility::toUpper(topScores.at(i).getUsername());
-        scores.at(i)->name->setString(upper);
-        scores.at(i)->rank->setString(std::to_string(topScores.at(i).getRank()));
-        scores.at(i)->score->setString(std::to_string(topScores.at(i).getScore()));
+        m_topScores.at(i)->name->setString(upper);
+        m_topScores.at(i)->score->setString(std::to_string(topScores.at(i).getScore()));
     }
     // my score
     std::string upper = c2d::Utility::toUpper(myScore.getUsername());
-    scores.at(3)->name->setString(upper);
-    scores.at(3)->rank->setString(std::to_string(myScore.getRank()));
-    scores.at(3)->score->setString(std::to_string(myScore.getScore()));
+    m_myScore->name->setString(upper);
+    m_myScore->rank->setString(std::to_string(myScore.getRank()));
+    m_myScore->score->setString(std::to_string(myScore.getScore()));
 }
 
 UiTopPlayers::~UiTopPlayers() {
-    delete cupTex;
+    delete m_cupTex;
 }
 
 UiTopPlayers::ScoreItem::ScoreItem(Ui *ui, const FloatRect &rect, Texture *cupTex,
@@ -61,13 +73,14 @@ UiTopPlayers::ScoreItem::ScoreItem(Ui *ui, const FloatRect &rect, Texture *cupTe
     UiTopPlayers::ScoreItem::setFillColor(fillColor);
 
     cupSprite = new Sprite(cupTex);
-    cupSprite->setPosition(8, 0);
+    cupSprite->setPosition(8, 8);
     cupSprite->setFillColor(cupColor);
     UiTopPlayers::ScoreItem::add(cupSprite);
 
     rank = new Text("0", 18, ui->getFont());
-    rank->setOrigin(Origin::Top);
-    rank->setPosition(8 + (cupSprite->getSize().x / 2), cupSprite->getSize().y - 4);
+    rank->setOrigin(Origin::Center);
+    rank->setPosition(8 + (cupSprite->getSize().x / 2), rect.height / 2);
+    rank->setVisibility(Visibility::Hidden);
     UiTopPlayers::ScoreItem::add(rank);
 
     name = new Text("NO SCORE YET", C2D_DEFAULT_CHAR_SIZE, ui->getFont());

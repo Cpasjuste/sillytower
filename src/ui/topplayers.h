@@ -29,8 +29,9 @@ public:
 
 private:
 
-    std::vector<ScoreItem *> scores;
-    Texture *cupTex;
+    ScoreItem *m_myScore;
+    std::vector<ScoreItem *> m_topScores;
+    Texture *m_cupTex;
 
 };
 
