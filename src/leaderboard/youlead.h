@@ -27,15 +27,18 @@ public:
     Score addScore(const std::string &id, const std::string &username, const std::string &password,
                    long score, int order = 0, bool overwrite = false) const;
 
-    std::vector<Score> getTopScores() const {
-        return m_topScores;
+    // SillyTower
+    Score addScore(long score);
+
+    std::vector<Score> getTopThree() const {
+        return getScores(m_id, 0, 0, 2);
     }
 
 private:
     CURL *m_curl = nullptr;
     std::string m_key = __YOULEAD_KEY__;
-    //std::string m_url = "http://mydedibox.fr/sillytower/leaderboard/Unity.php?";
-    std::string m_url = "http://127.0.0.1/Unity.php?";
+    std::string m_url = "http://mydedibox.fr/sillytower/leaderboard/Unity.php?";
+    //std::string m_url = "http://127.0.0.1/Unity.php?";
     std::string m_id = "top";
     User m_user;
     bool m_available = true;

@@ -40,7 +40,7 @@ public:
 
 private:
     std::string m_id;
-    std::string m_username;
+    std::string m_username = "UNKNOWN";
     long m_score = 0;
     int m_rank = 0;
     void *m_data = nullptr;

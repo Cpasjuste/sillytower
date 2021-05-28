@@ -2,13 +2,14 @@
 // Created by cpasjuste on 20/05/2021.
 //
 
+#include "game.h"
 #include "cube.h"
 
-Cube::Cube(PhysicsWorld *world, const FloatRect &rect, const Color &color) : RectangleShape(rect) {
-    Cube::setFillColor(color);
+Cube::Cube(Game *game, const FloatRect &rect) : RectangleShape(rect) {
+    Cube::setFillColor(game->getColorRandom());
     Cube::setOutlineColor(Color::Black);
     Cube::setOutlineThickness(2);
-    Cube::addPhysicsBody(world);
+    Cube::addPhysicsBody(game->getPhysicsWorld());
 }
 
 void Cube::playTween() {

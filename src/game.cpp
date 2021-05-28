@@ -2,7 +2,6 @@
 // Created by cpasjuste on 19/05/2021.
 //
 
-#include "main.h"
 #include "game.h"
 #include "background.h"
 #include "cloud.h"
@@ -23,6 +22,7 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     gameView = new Rectangle(Game::getSize());
     gameView->setOrigin(Origin::Bottom);
     gameView->setPosition(Game::getSize().x / 2, Game::getSize().y);
+    gameView->add(new TweenAlpha(0, 255, 3));
     Game::add(gameView);
 
     // background
@@ -50,7 +50,7 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     world->add(floorRect);
 
     // "camera" for scale effect
-    cameraScaleTween = new TweenScale(Game::getScale(), Game::getScale(), 0.5f);
+    cameraScaleTween = new TweenScale(Game::getScale(), Game::getScale(), 1);
     gameView->add(cameraScaleTween);
 
     // ui view
@@ -58,18 +58,46 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     Game::add(ui);
 
     // random generator for cube randomization
-    mt = std::mt19937(std::random_device{}());
+    std::random_device dev;
+    mt = std::mt19937(dev());
     cube_x = std::uniform_real_distribution<float>((Game::getSize().x / 2) - 100, (Game::getSize().x / 2) + 100);
     cube_width = std::uniform_real_distribution<float>(CUBE_MIN_WIDTH, CUBE_MAX_WIDTH);
     cube_height = std::uniform_real_distribution<float>(CUBE_MIN_HEIGHT, CUBE_MAX_HEIGHT);
-    cube_color = std::uniform_real_distribution<float>(100, 255);
 
-    // TODO: start game (ui)
-    cube = spawnCube();
+    gameView->setVisibility(Visibility::Hidden);
+    world->setPaused(true);
+    ui->start();
+}
+
+void Game::start() {
+
+    for (auto c : cubes) {
+        delete (c);
+    }
+    cubes.clear();
+
+    cameraScaleTween->setFromTo(gameView->getScale(), {1, 1});
+    cameraScaleTween->play();
+    cubeCount = 0;
+    cube = nullptr;
+    firstCube = secondCube = nullptr;
+
+    cube = spawnCube(getSize().y);
     firstCube = cube->getPhysicsBody();
+
+    world->setPaused(false);
+    ui->hideGameOver();
 }
 
 void Game::BeginContact(b2Contact *contact) {
+
+    /*
+    // TODO: debug
+    printf("GAME OVER! score: %i\n", cubeCount);
+    world->setPaused(true);
+    ui->showGameOver();
+    return;
+    */
 
     b2Body *b1 = contact->GetFixtureA()->GetBody();
     b2Body *b2 = contact->GetFixtureB()->GetBody();
@@ -117,8 +145,7 @@ Cube *Game::spawnCube(float y) {
     float w = cube_width(mt);
     FloatRect rect = {cube_x(mt) - (w / 2), y > 0 ? y : getSize().y / gameView->getScale().y,
                       w, cube_height(mt)};
-    Color color = {(uint8_t) cube_color(mt), (uint8_t) cube_color(mt), (uint8_t) cube_color(mt)};
-    auto c = new Cube(world, rect, color);
+    auto c = new Cube(this, rect);
     world->add(c);
     cubes.push_back(c);
     cubeCount++;
@@ -131,7 +158,7 @@ Cube *Game::spawnCube(float y) {
     }
 
     if (ui) {
-        ui->setScore(cubeCount);
+        ui->setScore(cubeCount - 1);
     }
 
     return c;
@@ -151,21 +178,8 @@ bool Game::onInput(Input::Player *players) {
 
     unsigned int keys = players[0].keys;
     if (cube) {
-        // TODO: reset game with button
-        if (world->isPaused()) {
-            for (auto c : cubes) {
-                delete (c);
-            }
-            cubes.clear();
-            cameraScaleTween->setFromTo(gameView->getScale(), {1, 1});
-            cameraScaleTween->play();
-            cubeCount = 0;
-            cube = nullptr;
-            firstCube = secondCube = nullptr;
-            cube = spawnCube(getSize().y);
-            firstCube = cube->getPhysicsBody();
-            ui->hideGameOver();
-            world->setPaused(false);
+        if (keys & Input::Key::Start && world->isPaused()) {
+            start();
         } else {
             if (keys & Input::Key::Left) {
                 cube->getPhysicsBody()->ApplyForce({-600, 0}, cube->getPhysicsBody()->GetWorldCenter(), true);
@@ -182,4 +196,5 @@ Game::~Game() {
     delete (leaderboard);
     delete (spriteSheet);
 }
+
 

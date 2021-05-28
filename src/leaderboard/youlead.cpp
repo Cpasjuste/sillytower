@@ -56,13 +56,6 @@ YouLead::YouLead() {
 
     curl_global_init(CURL_GLOBAL_ALL);
     m_curl = curl_easy_init();
-
-    // get top
-    m_topScores = getScores(m_id, 0, 0, 2);
-    for (auto &score : m_topScores) {
-        printf("top scores: %i: %s with %li points\n",
-               score.getRank(), score.getUsername().c_str(), score.getScore());
-    }
 }
 
 User YouLead::getLocalUser() const {
@@ -150,6 +143,10 @@ std::vector<Score> YouLead::getScores(const std::string &id, int order, int limi
     }
 
     return scores;
+}
+
+Score YouLead::addScore(long score) {
+    return addScore(m_id, m_user.getName(), m_user.getPassword(), score);
 }
 
 Score YouLead::addScore(const std::string &id, const std::string &username, const std::string &password,

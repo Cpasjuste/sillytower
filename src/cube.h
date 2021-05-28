@@ -9,10 +9,12 @@
 
 using namespace c2d;
 
+class Game;
+
 class Cube : public RectangleShape {
 
 public:
-    explicit Cube(PhysicsWorld *world, const FloatRect &rect, const Color &color);
+    explicit Cube(Game *game, const FloatRect &rect);
 
     void playTween();
 

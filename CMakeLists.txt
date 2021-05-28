@@ -32,8 +32,8 @@ set(VERSION_MINOR "0")
 set(PROJECT_AUTHOR "Cpasjuste")
 set(TITLE_ID "STOWE0001")
 
-set(STOWE_INC src)
-file(GLOB STOWE_SRC src/*.c* src/leaderboard/*.c*)
+set(STOWE_INC src src/ui src/leaderboard)
+file(GLOB STOWE_SRC src/*.c* src/ui/*.c* src/leaderboard/*.c*)
 
 set(STOWE_CFLAGS
         -D__YOULEAD_KEY__="${YOULEAD_KEY}"
