@@ -81,6 +81,7 @@ Score YouLead::getScore(const std::string &id, const std::string &username, int 
     //curl_easy_setopt(m_curl, CURLOPT_PROXY, "");
     curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, CurlWriteCallback);
     curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &readBuffer);
+    curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 5L);
 
     CURLcode res = curl_easy_perform(m_curl);
     if (res != CURLE_OK) {
@@ -122,6 +123,7 @@ std::vector<Score> YouLead::getScores(const std::string &id, int order, int limi
     //curl_easy_setopt(m_curl, CURLOPT_PROXY, "");
     curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, CurlWriteCallback);
     curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &readBuffer);
+    curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 5L);
 
     CURLcode res = curl_easy_perform(m_curl);
     if (res != CURLE_OK) {
@@ -186,6 +188,7 @@ Score YouLead::addScore(const std::string &id, const std::string &username, cons
     //curl_easy_setopt(m_curl, CURLOPT_PROXY, "");
     curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, CurlWriteCallback);
     curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &readBuffer);
+    curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 5L);
 
     CURLcode res = curl_easy_perform(m_curl);
     if (res != CURLE_OK) {
