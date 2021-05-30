@@ -110,6 +110,7 @@ void Ui::onUpdate() {
     if (!gameStarted) {
         float elapsed = splashClock.getElapsedTime().asSeconds();
         if (elapsed > 14) {
+            m_game->getMusic()->play();
             m_game->getGameView()->setVisibility(c2d::Visibility::Visible, true);
             title->setVisibility(Visibility::Visible, true);
             pressStart->setVisibility(Visibility::Visible, true);

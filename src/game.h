@@ -10,6 +10,7 @@
 #include "ui.h"
 #include "cube.h"
 #include "youlead.h"
+#include "music.h"
 
 #define CUBE_MIN_WIDTH 100
 #define CUBE_MAX_WIDTH 300
@@ -56,6 +57,10 @@ public:
         return leaderboard;
     }
 
+    Music *getMusic() {
+        return music;
+    }
+
     long getScore() const {
         return cubeCount;
     }
@@ -83,6 +88,7 @@ private:
     PhysicsWorld *world;
     YouLead *leaderboard;
     Rectangle *gameView;
+    Music *music;
 
     // sprites
     Texture *spriteSheet = nullptr;

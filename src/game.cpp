@@ -12,6 +12,10 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     // TODO: use c++ generators and distributions (used for clouds)
     srand(static_cast <unsigned> (time(nullptr)));
 
+    // music
+    music = new Music();
+    music->load(Game::getIo()->getDataPath() + "1037870_-Northstar-.mp3");
+
     // leaderboards !
     leaderboard = new YouLead();
 
@@ -194,6 +198,5 @@ bool Game::onInput(Input::Player *players) {
 Game::~Game() {
     delete (leaderboard);
     delete (spriteSheet);
+    delete (music);
 }
-
-

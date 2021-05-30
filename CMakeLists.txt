@@ -56,11 +56,11 @@ endif ()
 #####################
 # executable
 #####################
-add_executable(${CMAKE_PROJECT_NAME} ${STOWE_SRC})
+add_executable(${CMAKE_PROJECT_NAME} ${STOWE_SRC} src/music.cpp src/music.h)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${STOWE_INC})
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE ${STOWE_CFLAGS})
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
-target_link_libraries(${CMAKE_PROJECT_NAME} cross2d ssl crypto ${STOWE_LDFLAGS})
+target_link_libraries(${CMAKE_PROJECT_NAME} cross2d ssl crypto ${STOWE_LDFLAGS} SDL2_mixer)
 
 #####################
 # targets
