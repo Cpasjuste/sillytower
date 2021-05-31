@@ -42,7 +42,8 @@ set(STOWE_CFLAGS
         )
 
 find_package(CURL REQUIRED)
-set(STOWE_LDFLAGS ${CURL_LIBRARIES})
+#find_package(OpenSSL REQUIRED)
+set(STOWE_LDFLAGS ${CURL_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 #####################
 # PLATORM SPECIFIC
@@ -51,7 +52,9 @@ if (PLATFORM_SWITCH)
 elseif (PLATFORM_VITA)
     list(APPEND STOWE_LDFLAGS
             vorbisfile vorbis ogg mikmod FLAC mpg123
-            ScePower_stub SceAppUtil_stub SceVshBridge_stub
+            ScePower_stub SceAppUtil_stub
+            SceNet_stub SceNetCtl_stub
+            #SceVshBridge_stub
             -Wl,-q)
 elseif (PLATFORM_LINUX)
 endif ()

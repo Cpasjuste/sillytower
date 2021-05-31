@@ -11,7 +11,10 @@
 #include <cstring>
 #include <psp2/apputil.h>
 #include <psp2/system_param.h>
-#include <psp2/vshbridge.h>
+//#include <psp2/vshbridge.h>
+#include <psp2/net/net.h>
+#include <psp2/net/netctl.h>
+#include <psp2/sysmodule.h>
 
 #define R_FAILED(res)      ((res)<0)
 
@@ -23,8 +26,30 @@ static size_t CurlWriteCallback(void *contents, size_t size, size_t nmemb, void 
 }
 
 YouLead::YouLead() {
-
 #ifdef __PSP2__
+    // network
+    if (R_FAILED(sceSysmoduleLoadModule(SCE_SYSMODULE_NET))) {
+        printf("ERROR: sceSysmoduleLoadModule(SCE_SYSMODULE_NET) failed\n");
+        m_available = false;
+        return;
+    }
+    SceNetInitParam netInitParam;
+    int size = 4 * 1024 * 1024;
+    netInitParam.memory = malloc(size);
+    netInitParam.size = size;
+    netInitParam.flags = 0;
+    if (R_FAILED(sceNetInit(&netInitParam))) {
+        printf("ERROR: sceNetInit failed\n");
+        m_available = false;
+        return;
+    }
+    if (R_FAILED(sceNetCtlInit())) {
+        printf("ERROR: sceNetCtlInit failed\n");
+        m_available = false;
+        return;
+    }
+
+    // get username
     SceAppUtilInitParam init;
     SceAppUtilBootParam boot;
     memset(&init, 0, sizeof(SceAppUtilInitParam));
@@ -35,9 +60,9 @@ YouLead::YouLead() {
         return;
     }
 
-    // get username
     SceChar8 userName[SCE_SYSTEM_PARAM_USERNAME_MAXSIZE];
-    sceAppUtilSystemParamGetString(SCE_SYSTEM_PARAM_ID_USERNAME, userName, SCE_SYSTEM_PARAM_USERNAME_MAXSIZE);
+    sceAppUtilSystemParamGetString(SCE_SYSTEM_PARAM_ID_USERNAME, userName,
+                                   SCE_SYSTEM_PARAM_USERNAME_MAXSIZE);
     printf("YouLead: username: %s\n", userName);
 
 #if 0 // TODO: fix _vshSblAimgrGetConsoleId failing
@@ -54,8 +79,21 @@ YouLead::YouLead() {
     }
     printf("YouLead: id: %s\n", id);
 #endif
+    // get "password"
+    SceNetEtherAddr mac;
+    char macAddress[0x12];
+    if (R_FAILED(sceNetGetMacAddress(&mac, 0))) {
+        printf("ERROR: sceNetGetMacAddress failed\n");
+        m_available = false;
+        return;
+    }
+    snprintf(macAddress, 0x12, "%02x%02x%02x%02x%02x%02x",
+             mac.data[0], mac.data[1], mac.data[2],
+             mac.data[3], mac.data[4], mac.data[5]);
+    printf("YouLead: password: %s\n", macAddress);
 
-    m_user = {(char *) userName, "testpwd"};
+    // finally...
+    m_user = {(char *) userName, macAddress};
 #else
     m_user = {"cpasjuste", "testpwd"};
 #endif
@@ -223,6 +261,9 @@ YouLead::~YouLead() {
     }
     curl_global_cleanup();
 #ifdef __PSP2__
+    sceNetCtlTerm();
+    sceNetTerm();
+    sceSysmoduleUnloadModule(SCE_SYSMODULE_NET);
     sceAppUtilShutdown();
 #endif
 }
