@@ -49,7 +49,10 @@ set(STOWE_LDFLAGS ${CURL_LIBRARIES})
 #####################
 if (PLATFORM_SWITCH)
 elseif (PLATFORM_VITA)
-    list(APPEND STOWE_LDFLAGS SceAppUtil_stub SceVshBridge_stub -Wl,-q)
+    list(APPEND STOWE_LDFLAGS
+            vorbisfile vorbis ogg mikmod FLAC mpg123
+            ScePower_stub SceAppUtil_stub SceVshBridge_stub
+            -Wl,-q)
 elseif (PLATFORM_LINUX)
 endif ()
 

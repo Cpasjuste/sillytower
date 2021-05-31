@@ -4,7 +4,22 @@
 
 #include "main.h"
 
+#ifdef __PSP2__
+
+#include <psp2/power.h>
+
+int _newlib_heap_size_user = 192 * 1024 * 1024;
+#endif
+
 int main(int argc, char *argv[]) {
+
+#ifdef __PSP2__
+    // set max cpu speed
+    scePowerSetArmClockFrequency(444);
+    scePowerSetBusClockFrequency(222);
+    scePowerSetGpuClockFrequency(222);
+    scePowerSetGpuXbarClockFrequency(166);
+#endif
 
     auto *game = new Game({960, 544});
 
