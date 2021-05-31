@@ -30,6 +30,7 @@ YouLead::YouLead() {
     memset(&init, 0, sizeof(SceAppUtilInitParam));
     memset(&boot, 0, sizeof(SceAppUtilBootParam));
     if (R_FAILED(sceAppUtilInit(&init, &boot))) {
+        printf("ERROR: sceAppUtilInit failed\n");
         m_available = false;
         return;
     }
@@ -37,10 +38,13 @@ YouLead::YouLead() {
     // get username
     SceChar8 userName[SCE_SYSTEM_PARAM_USERNAME_MAXSIZE];
     sceAppUtilSystemParamGetString(SCE_SYSTEM_PARAM_ID_USERNAME, userName, SCE_SYSTEM_PARAM_USERNAME_MAXSIZE);
+    printf("YouLead: username: %s\n", userName);
 
+#if 0 // TODO: fix _vshSblAimgrGetConsoleId failing
     // get password
     char cid[16], id[33];
     if (R_FAILED(_vshSblAimgrGetConsoleId(cid))) {
+        printf("ERROR: _vshSblAimgrGetConsoleId failed\n");
         m_available = false;
         return;
     }
@@ -48,8 +52,10 @@ YouLead::YouLead() {
     for (SceInt i = 0; i < 16; i++) {
         snprintf(&id[2 * i], 33, "%02X", cid[i]);
     }
+    printf("YouLead: id: %s\n", id);
+#endif
 
-    m_user = {(char *) userName, id};
+    m_user = {(char *) userName, "testpwd"};
 #else
     m_user = {"cpasjuste", "testpwd"};
 #endif

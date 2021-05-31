@@ -14,7 +14,7 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
     // music
     music = new Music();
-    music->load(Game::getIo()->getDataPath() + "1037870_-Northstar-.mp3");
+    //music->load(Game::getIo()->getDataPath() + "1037870_-Northstar-.mp3");
 
     // leaderboards !
     leaderboard = new YouLead();
