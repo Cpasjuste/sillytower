@@ -75,7 +75,7 @@ public:
     };
 
     Color getColorRandom() const {
-        return colors[rand() % 5];
+        return colors[Utility::random(0, 4)];
     }
 
 private:
@@ -93,12 +93,6 @@ private:
 
     // sprites
     Texture *spriteSheet = nullptr;
-
-    // random
-    std::mt19937 mt;
-    std::uniform_real_distribution<float> cube_x;
-    std::uniform_real_distribution<float> cube_width;
-    std::uniform_real_distribution<float> cube_height;
 
     b2Body *floor = nullptr;
     b2Body *firstCube = nullptr;

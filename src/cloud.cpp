@@ -10,7 +10,7 @@
 Cloud::Cloud(Game *game) : Sprite() {
     m_game = game;
     setTexture(m_game->getSpriteSheet());
-    setTextureRect(st::Utility::getTextureRect(getTexture(), 4, rand() % 4, 0));
+    setTextureRect(st::Utility::getTextureRect(getTexture(), 4, Utility::random(0, 4), 0));
     Cloud::setScale(2, 2);
     Cloud::setOrigin(Origin::Center);
     reset();
@@ -18,8 +18,7 @@ Cloud::Cloud(Game *game) : Sprite() {
 
 void Cloud::reset() {
     // speed 0.1f <> 0.5f
-    m_speed = 1.0f + (float) rand() / ((float) RAND_MAX / (3.0f - 1.0f));
-
+    m_speed = Utility::random(1.0f, 3.0f);
     // position (x)
     float width = m_game->getGameView()->getSize().x;
     float scale = m_game->getGameView()->getScale().x;
@@ -29,11 +28,11 @@ void Cloud::reset() {
     float height = m_game->getGameView()->getSize().y;
     float min = -(height * 2.5f);
     float max = min - (height * 2.5f);
-    float y = min + (float) rand() / ((float) RAND_MAX / (max - min));
+    float y = Utility::random(min, max);
     //printf("min: %f, max: %f, y: %f\n", min, max, y);
 
     Cloud::setPosition(x, y);
-    setTextureRect(st::Utility::getTextureRect(getTexture(), 4, rand() % 4, 0));
+    setTextureRect(st::Utility::getTextureRect(getTexture(), 4, Utility::random(0, 4), 0));
 }
 
 void Cloud::onUpdate() {

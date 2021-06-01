@@ -11,12 +11,6 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
     //Game::setPrintStats(true);
 
-    // TODO: use c++ generators and distributions (used for clouds)
-    srand(static_cast <unsigned> (time(nullptr)));
-    // random generator for cube randomization
-    std::random_device dev;
-    mt = std::mt19937(dev());
-
     // for local score
     Game::getIo()->create(Game::getIo()->getDataPath() + "SillyTowerData");
 
@@ -49,10 +43,10 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     }
 
     // stars
-    std::uniform_real_distribution<float> x_dist = std::uniform_real_distribution<float>(-6000, 6000);
-    std::uniform_real_distribution<float> y_dist = std::uniform_real_distribution<float>(-4000, -7000);
     for (int i = 0; i < STARS_MAX; i++) {
-        gameView->add(new RectangleShape({x_dist(mt), y_dist(mt), 16, 16}));
+        int x = Utility::random(-6000, 6000);
+        int y = Utility::random(-7000, -4000);
+        gameView->add(new RectangleShape({(float) x, (float) y, 16, 16}));
     }
 
     // create physics world and add it to the game view
@@ -75,11 +69,6 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     // ui view
     ui = new Ui(this);
     Game::add(ui);
-
-    // random generator for cube randomization
-    cube_x = std::uniform_real_distribution<float>((Game::getSize().x / 2) - 100, (Game::getSize().x / 2) + 100);
-    cube_width = std::uniform_real_distribution<float>(CUBE_MIN_WIDTH, CUBE_MAX_WIDTH);
-    cube_height = std::uniform_real_distribution<float>(CUBE_MIN_HEIGHT, CUBE_MAX_HEIGHT);
 
     gameView->setVisibility(Visibility::Hidden);
     world->setPaused(true);
@@ -178,9 +167,11 @@ Cube *Game::spawnCube(float y) {
         }
     }
 
-    float w = cube_width(mt);
-    FloatRect rect = {cube_x(mt) - (w / 2), y > 0 ? y : getSize().y / gameView->getScale().y,
-                      w, cube_height(mt)};
+    float x = Utility::random((Game::getSize().x / 2) - 100, (Game::getSize().x / 2) + 100);
+    int w = Utility::random(CUBE_MIN_WIDTH, CUBE_MAX_WIDTH);
+    int h = Utility::random(CUBE_MIN_HEIGHT, CUBE_MAX_HEIGHT);
+    FloatRect rect = {(float) x - ((float) w / 2), y > 0 ? y : getSize().y / gameView->getScale().y,
+                      (float) w, (float) h};
     auto c = new Cube(this, rect);
     c->getPhysicsBody()->GetUserData().pointer = (uintptr_t) c;
     world->add(c);
@@ -228,6 +219,13 @@ bool Game::onInput(Input::Player *players) {
             }
         }
     }
+#ifndef NDEBUG
+    if (keys & Input::Key::Up) {
+        float scaling = gameView->getScale().y - (0.5f * gameView->getScale().y);
+        cameraScaleTween->setFromTo(gameView->getScale(), {scaling, scaling});
+        cameraScaleTween->play();
+    }
+#endif
 
     return Renderer::onInput(players);
 }
