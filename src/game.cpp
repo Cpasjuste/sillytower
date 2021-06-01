@@ -9,8 +9,16 @@
 
 Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
+    Game::setPrintStats(true);
+
     // TODO: use c++ generators and distributions (used for clouds)
     srand(static_cast <unsigned> (time(nullptr)));
+    // random generator for cube randomization
+    std::random_device dev;
+    mt = std::mt19937(dev());
+
+    // for local score
+    Game::getIo()->create(Game::getIo()->getDataPath() + "SillyTower");
 
     // music
     music = new Music();
@@ -40,6 +48,13 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
         gameView->add(new Cloud(this));
     }
 
+    // stars
+    std::uniform_real_distribution<float> x_dist = std::uniform_real_distribution<float>(-6000, 6000);
+    std::uniform_real_distribution<float> y_dist = std::uniform_real_distribution<float>(-4000, -7000);
+    for (int i = 0; i < STARS_MAX; i++) {
+        gameView->add(new RectangleShape({x_dist(mt), y_dist(mt), 16, 16}));
+    }
+
     // create physics world and add it to the game view
     world = new PhysicsWorld({0, -5});
     world->getPhysics()->SetContactListener(this);
@@ -62,8 +77,6 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     Game::add(ui);
 
     // random generator for cube randomization
-    std::random_device dev;
-    mt = std::mt19937(dev());
     cube_x = std::uniform_real_distribution<float>((Game::getSize().x / 2) - 100, (Game::getSize().x / 2) + 100);
     cube_width = std::uniform_real_distribution<float>(CUBE_MIN_WIDTH, CUBE_MAX_WIDTH);
     cube_height = std::uniform_real_distribution<float>(CUBE_MIN_HEIGHT, CUBE_MAX_HEIGHT);

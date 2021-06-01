@@ -213,15 +213,18 @@ Score YouLead::addScore(const std::string &id, const std::string &username, cons
     if (!m_available || !m_curl) {
         // local score (TODO: get read of c2d_renderer call)
         auto *io = c2d_renderer->getIo();
-        char *scoreData = nullptr;
+        char *scoreData = nullptr, *endPtr = nullptr;
         int oldScore = 0;
-        char *endPtr;
-        if (io->read(io->getDataPath() + "score.bin", &scoreData, sizeof(int)) > 0) {
-            oldScore = (int) strtol(scoreData, &endPtr, 10);
+        int dataLen = sizeof(int);
+        size_t readSize = io->read(io->getDataPath() + "SillyTower/data.bin", &scoreData, dataLen);
+        if (scoreData) {
+            if (readSize == dataLen) {
+                oldScore = (int) strtol(scoreData, &endPtr, 10);
+            }
             free(scoreData);
         }
         if (_score > oldScore) {
-            io->write(io->getDataPath() + "score.bin", std::to_string(_score).c_str(), sizeof(int));
+            io->write(io->getDataPath() + "SillyTower/data.bin", std::to_string(_score).c_str(), dataLen);
         } else {
             _score = oldScore;
         }

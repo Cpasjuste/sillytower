@@ -16,7 +16,8 @@
 #define CUBE_MAX_WIDTH 300
 #define CUBE_MIN_HEIGHT 100
 #define CUBE_MAX_HEIGHT 100
-#define CLOUD_MAX 20
+#define CLOUD_MAX 30
+#define STARS_MAX 100
 #define STATIC_CUBE_MULTIPLIER 20
 
 class Game : public C2DRenderer, b2ContactListener {
