@@ -18,19 +18,19 @@ public:
 
     ~YouLead();
 
-    User getLocalUser() const;
+    User getLocalUser();
 
-    Score getScore(const std::string &id, const std::string &username, int order = 0) const;
+    Score getScore(const std::string &id, const std::string &username, int order = 0);
 
-    std::vector<Score> getScores(const std::string &id, int order = 0, int limit1 = 0, int limit2 = 0) const;
+    std::vector<Score> getScores(const std::string &id, int order = 0, int limit1 = 0, int limit2 = 0);
 
     Score addScore(const std::string &id, const std::string &username, const std::string &password,
-                   long score, int order = 0, bool overwrite = false) const;
+                   long score, int order = 0, bool overwrite = false);
 
     // SillyTower
     Score addScore(long score);
 
-    std::vector<Score> getTopThree() const {
+    std::vector<Score> getTopThree() {
         return getScores(m_id, 0, 0, 2);
     }
 

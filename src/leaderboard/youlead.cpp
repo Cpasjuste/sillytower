@@ -102,11 +102,11 @@ YouLead::YouLead() {
     m_curl = curl_easy_init();
 }
 
-User YouLead::getLocalUser() const {
+User YouLead::getLocalUser() {
     return m_user;
 }
 
-Score YouLead::getScore(const std::string &id, const std::string &username, int order) const {
+Score YouLead::getScore(const std::string &id, const std::string &username, int order) {
 
     std::string readBuffer;
     std::string fields;
@@ -130,6 +130,7 @@ Score YouLead::getScore(const std::string &id, const std::string &username, int 
     CURLcode res = curl_easy_perform(m_curl);
     if (res != CURLE_OK) {
         printf("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        m_available = false;
         return score;
     }
 
@@ -147,7 +148,7 @@ Score YouLead::getScore(const std::string &id, const std::string &username, int 
     return score;
 }
 
-std::vector<Score> YouLead::getScores(const std::string &id, int order, int limit1, int limit2) const {
+std::vector<Score> YouLead::getScores(const std::string &id, int order, int limit1, int limit2) {
 
     std::string readBuffer;
     std::string fields;
@@ -172,6 +173,7 @@ std::vector<Score> YouLead::getScores(const std::string &id, int order, int limi
     CURLcode res = curl_easy_perform(m_curl);
     if (res != CURLE_OK) {
         printf("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        m_available = false;
         return std::vector<Score>();
     }
 
@@ -196,7 +198,7 @@ Score YouLead::addScore(long score) {
 }
 
 Score YouLead::addScore(const std::string &id, const std::string &username, const std::string &password,
-                        long _score, int order, bool overwrite) const {
+                        long _score, int order, bool overwrite) {
 
     unsigned char md5[MD5_DIGEST_LENGTH];
     char hash[2 * MD5_DIGEST_LENGTH + 1];
@@ -237,6 +239,7 @@ Score YouLead::addScore(const std::string &id, const std::string &username, cons
     CURLcode res = curl_easy_perform(m_curl);
     if (res != CURLE_OK) {
         printf("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        m_available = false;
         return score;
     }
 
