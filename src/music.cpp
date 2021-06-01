@@ -18,12 +18,18 @@ Music::Music() {
 
 bool Music::load(const std::string &path) {
     music = Mix_LoadMUS(path.c_str());
+    if (!music) {
+        printf("ERROR: Music::load: %s\n", Mix_GetError());
+    }
     return music != nullptr;
 }
 
 void Music::play() {
     if (music) {
-        Mix_PlayMusic(music, -1);
+        int res = Mix_PlayMusic(music, -1);
+        if (res < 0) {
+            printf("ERROR: Music::play: res = %i, error: %s\n", res, Mix_GetError());
+        }
     }
 }
 

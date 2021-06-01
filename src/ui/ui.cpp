@@ -106,7 +106,6 @@ void Ui::hideGameOver() {
 }
 
 void Ui::onUpdate() {
-
     if (!gameStarted) {
         float elapsed = splashClock.getElapsedTime().asSeconds();
         if (elapsed > 14) {
@@ -130,17 +129,19 @@ void Ui::onUpdate() {
 }
 
 bool Ui::onInput(Input::Player *players) {
-
     if (!gameStarted) {
-        if (buttonPressCount > 0) {
-            splashKyuhenTex->setVisibility(Visibility::Hidden, false);
-            splashCpasTex->setVisibility(Visibility::Hidden, false);
-            m_game->getGameView()->setVisibility(c2d::Visibility::Visible, true);
-            title->setVisibility(Visibility::Visible, true);
-            pressStart->setVisibility(Visibility::Visible, true);
-            gameStarted = true;
+        if (players[0].keys & Input::Key::Start) {
+            if (buttonPressCount > 0) {
+                m_game->getMusic()->play();
+                splashKyuhenTex->setVisibility(Visibility::Hidden, false);
+                splashCpasTex->setVisibility(Visibility::Hidden, false);
+                m_game->getGameView()->setVisibility(c2d::Visibility::Visible, true);
+                title->setVisibility(Visibility::Visible, true);
+                pressStart->setVisibility(Visibility::Visible, true);
+                gameStarted = true;
+            }
+            buttonPressCount++;
         }
-        buttonPressCount++;
     } else if (players[0].keys & Input::Key::Start && title->isVisible()) {
         title->setVisibility(Visibility::Hidden, true);
         pressStart->setVisibility(Visibility::Hidden, false);
