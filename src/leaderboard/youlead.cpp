@@ -215,8 +215,8 @@ Score YouLead::addScore(const std::string &id, const std::string &username, cons
         auto *io = c2d_renderer->getIo();
         char *scoreData = nullptr, *endPtr = nullptr;
         int oldScore = 0;
-        int dataLen = sizeof(int);
-        size_t readSize = io->read(io->getDataPath() + "SillyTower/data.bin", &scoreData, dataLen);
+        size_t dataLen = sizeof(int);
+        size_t readSize = io->read(io->getDataPath() + "SillyTowerData/data.bin", &scoreData, dataLen);
         if (scoreData) {
             if (readSize == dataLen) {
                 oldScore = (int) strtol(scoreData, &endPtr, 10);
@@ -224,7 +224,7 @@ Score YouLead::addScore(const std::string &id, const std::string &username, cons
             free(scoreData);
         }
         if (_score > oldScore) {
-            io->write(io->getDataPath() + "SillyTower/data.bin", std::to_string(_score).c_str(), dataLen);
+            io->write(io->getDataPath() + "SillyTowerData/data.bin", std::to_string(_score).c_str(), dataLen);
         } else {
             _score = oldScore;
         }

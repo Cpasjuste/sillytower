@@ -22,7 +22,7 @@ public:
 
     void start();
 
-    void setScore(int score);
+    void setScore(long score);
 
     void showGameOver();
 

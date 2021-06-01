@@ -16,9 +16,9 @@ class Cube : public RectangleShape {
 public:
     explicit Cube(Game *game, const FloatRect &rect);
 
-    void playTween();
+    void playTween(const Color &toColor);
 
-    void stopTween();
+    void stopTween(const Color &toColor);
 
 private:
     void onUpdate() override;

@@ -12,18 +12,18 @@ Cube::Cube(Game *game, const FloatRect &rect) : RectangleShape(rect) {
     Cube::addPhysicsBody(game->getPhysicsWorld());
 }
 
-void Cube::playTween() {
+void Cube::playTween(const Color &toColor) {
     if (!tweenColor) {
-        tweenColor = new TweenColor(getFillColor(), Color::GrayLight, 0.5f, TweenLoop::PingPong);
+        tweenColor = new TweenColor(getFillColor(), toColor, 0.5f, TweenLoop::PingPong);
         Cube::add(tweenColor);
     }
     tweenColor->play();
 }
 
-void Cube::stopTween() {
+void Cube::stopTween(const Color &toColor) {
     if (tweenColor) {
         tweenColor->setState(TweenState::Stopped);
-        setFillColor(Color::GrayLight);
+        setFillColor(toColor);
     }
 }
 

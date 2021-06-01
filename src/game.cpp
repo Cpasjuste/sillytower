@@ -9,7 +9,7 @@
 
 Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
-    Game::setPrintStats(true);
+    //Game::setPrintStats(true);
 
     // TODO: use c++ generators and distributions (used for clouds)
     srand(static_cast <unsigned> (time(nullptr)));
@@ -18,7 +18,7 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     mt = std::mt19937(dev());
 
     // for local score
-    Game::getIo()->create(Game::getIo()->getDataPath() + "SillyTower");
+    Game::getIo()->create(Game::getIo()->getDataPath() + "SillyTowerData");
 
     // music
     music = new Music();
@@ -88,17 +88,16 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
 void Game::start() {
 
+    cameraScaleTween->setFromTo(gameView->getScale(), {1, 1});
+    cameraScaleTween->play();
+
     for (auto c : cubes) {
         delete (c);
     }
     cubes.clear();
-
-    cameraScaleTween->setFromTo(gameView->getScale(), {1, 1});
-    cameraScaleTween->play();
-    cubeCount = 0;
     cube = nullptr;
     firstCube = secondCube = nullptr;
-
+    spawnedCubes = 0;
     cube = spawnCube(getSize().y);
     firstCube = cube->getPhysicsBody();
 
@@ -115,15 +114,16 @@ void Game::BeginContact(b2Contact *contact) {
     ui->showGameOver();
     return;
 #endif
-    b2Body *b1 = contact->GetFixtureA()->GetBody();
-    b2Body *b2 = contact->GetFixtureB()->GetBody();
-    if (b1 == floor || b2 == floor) {
-        if (b1 != firstCube && b2 != firstCube
-            && b1 != secondCube && b2 != secondCube) {
+    b2Body *body1 = contact->GetFixtureA()->GetBody();
+    b2Body *body2 = contact->GetFixtureB()->GetBody();
+
+    // check for ground collisions
+    if (body1 == floor || body2 == floor) {
+        if (body1 != firstCube && body2 != firstCube && body1 != secondCube && body2 != secondCube) {
             if (!secondCube) {
-                secondCube = b1 == floor ? b2 : b1;
+                secondCube = body1 == floor ? body2 : body1;
             } else {
-                printf("GAME OVER! score: %i\n", cubeCount);
+                printf("GAME OVER! score: %li\n", getScore());
                 world->setPaused(true);
                 ui->showGameOver();
             }
@@ -131,9 +131,7 @@ void Game::BeginContact(b2Contact *contact) {
     }
 
     if (cube) {
-        if (contact->GetFixtureA()->GetBody() == cube->getPhysicsBody()
-            || contact->GetFixtureB()->GetBody() == cube->getPhysicsBody()) {
-            //printf("Game::BeginContact\n");
+        if (body1 == cube->getPhysicsBody() || body2 == cube->getPhysicsBody()) {
             cube->getPhysicsBody()->SetGravityScale(2);
             needSpawn = true;
         }
@@ -151,10 +149,32 @@ Cube *Game::spawnCube(float y) {
             cameraScaleTween->setFromTo(gameView->getScale(), {scaling, scaling});
             cameraScaleTween->play();
         }
-        // set cube to static every 20 cubes
-        if (st::Utility::isMultipleOf(cubeCount, STATIC_CUBE_MULTIPLIER)) {
-            cube->stopTween();
+
+        if (st::Utility::isMultipleOf(spawnedCubes, STATIC_CUBE_MULTIPLIER)) {
+            // set cube to static every 20 cubes
+            cube->stopTween(Color::GrayLight);
             cube->getPhysicsBody()->SetType(b2_staticBody);
+        } else if (st::Utility::isMultipleOf(spawnedCubes, STATIC_CUBE_MULTIPLIER / 2)) {
+            // set cube to "exploding" every 10 cubes
+            cube->stopTween(Color::Red);
+            b2Body *body = cube->getPhysicsBody();
+            for (b2ContactEdge *edge = body->GetContactList(); edge; edge = edge->next) {
+                auto *b1 = edge->contact->GetFixtureA()->GetBody();
+                auto *b2 = edge->contact->GetFixtureB()->GetBody();
+                if (b1 != cube->getPhysicsBody() && b1->GetUserData().pointer != 0) {
+                    Cube *c = (Cube *) b1->GetUserData().pointer;
+                    cubes.erase(std::remove(cubes.begin(), cubes.end(), c), cubes.end());
+                    delete (c);
+                }
+                if (b2 != cube->getPhysicsBody() && b2->GetUserData().pointer != 0) {
+                    Cube *c = (Cube *) b2->GetUserData().pointer;
+                    cubes.erase(std::remove(cubes.begin(), cubes.end(), c), cubes.end());
+                    delete (c);
+                }
+            }
+            cubes.erase(std::remove(cubes.begin(), cubes.end(), cube), cubes.end());
+            delete (cube);
+            cube = nullptr;
         }
     }
 
@@ -162,19 +182,23 @@ Cube *Game::spawnCube(float y) {
     FloatRect rect = {cube_x(mt) - (w / 2), y > 0 ? y : getSize().y / gameView->getScale().y,
                       w, cube_height(mt)};
     auto c = new Cube(this, rect);
+    c->getPhysicsBody()->GetUserData().pointer = (uintptr_t) c;
     world->add(c);
     cubes.push_back(c);
-    cubeCount++;
+    spawnedCubes++;
 
     if (cube) {
-        // set cube to static every 20 cubes
-        if (st::Utility::isMultipleOf(cubeCount, STATIC_CUBE_MULTIPLIER)) {
-            c->playTween();
+        if (st::Utility::isMultipleOf(spawnedCubes, STATIC_CUBE_MULTIPLIER)) {
+            // set cube to static every 20 cubes
+            c->playTween(Color::GrayLight);
+        } else if (st::Utility::isMultipleOf(spawnedCubes, STATIC_CUBE_MULTIPLIER / 2)) {
+            // set cube to "exploding" every 10 cubes
+            c->playTween(Color::Red);
         }
     }
 
     if (ui) {
-        ui->setScore(cubeCount - 1);
+        ui->setScore(getScore());
     }
 
     return c;

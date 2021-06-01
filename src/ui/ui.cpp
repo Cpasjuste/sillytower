@@ -76,7 +76,7 @@ void Ui::start() {
     splashClock.restart();
 }
 
-void Ui::setScore(int score) {
+void Ui::setScore(long score) {
     scoreText->setString("SCORE: " + std::to_string(score));
 }
 

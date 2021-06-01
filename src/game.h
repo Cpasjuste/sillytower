@@ -63,7 +63,7 @@ public:
     }
 
     long getScore() const {
-        return cubeCount;
+        return (long) spawnedCubes - 1;
     }
 
     Texture *getSpriteSheet() {
@@ -105,8 +105,8 @@ private:
     b2Body *secondCube = nullptr;
     Cube *cube = nullptr;
     std::vector<Cube *> cubes;
-    int cubeCount = 0;
     bool needSpawn = false;
+    int spawnedCubes = 0;
 
     // camera
     TweenScale *cameraScaleTween;
