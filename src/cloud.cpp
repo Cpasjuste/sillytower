@@ -27,8 +27,8 @@ void Cloud::reset() {
     float x = -((extend / 2) + getSize().x);
     // position (y)
     float height = m_game->getGameView()->getSize().y;
-    float min = -(height * 3);
-    float max = min - (height * 3);
+    float min = -(height * 2.5f);
+    float max = min - (height * 2.5f);
     float y = min + (float) rand() / ((float) RAND_MAX / (max - min));
     //printf("min: %f, max: %f, y: %f\n", min, max, y);
 

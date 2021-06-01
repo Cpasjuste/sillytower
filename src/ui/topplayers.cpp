@@ -77,18 +77,18 @@ UiTopPlayers::ScoreItem::ScoreItem(Ui *ui, const FloatRect &rect, Texture *cupTe
     cupSprite->setFillColor(cupColor);
     UiTopPlayers::ScoreItem::add(cupSprite);
 
-    rank = new Text("0", 18, ui->getFont());
+    rank = new Text("??", 18, ui->getFont());
     rank->setOrigin(Origin::Center);
     rank->setPosition(8 + (cupSprite->getSize().x / 2), rect.height / 2);
     rank->setVisibility(Visibility::Hidden);
     UiTopPlayers::ScoreItem::add(rank);
 
-    name = new Text("NO SCORE YET", C2D_DEFAULT_CHAR_SIZE, ui->getFont());
+    name = new Text("NO CONNEXION !", C2D_DEFAULT_CHAR_SIZE, ui->getFont());
     name->setOrigin(Origin::Left);
     name->setPosition(64, rect.height / 2);
     UiTopPlayers::ScoreItem::add(name);
 
-    score = new Text("0", C2D_DEFAULT_CHAR_SIZE, ui->getFont());
+    score = new Text("??", C2D_DEFAULT_CHAR_SIZE, ui->getFont());
     score->setOrigin(Origin::Right);
     score->setPosition(rect.width - 8, rect.height / 2);
     UiTopPlayers::ScoreItem::add(score);

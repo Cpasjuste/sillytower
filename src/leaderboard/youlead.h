@@ -34,6 +34,10 @@ public:
         return getScores(m_id, 0, 0, 2);
     }
 
+    bool isAvailable() {
+        return m_available;
+    }
+
 private:
     CURL *m_curl = nullptr;
     std::string m_key = __YOULEAD_KEY__;
@@ -42,9 +46,6 @@ private:
     std::string m_id = "top";
     User m_user;
     bool m_available = true;
-
-    //
-    std::vector<Score> m_topScores;
 };
 
 #endif //SILLYTOWER_YOULEAD_H

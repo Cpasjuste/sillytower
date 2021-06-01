@@ -100,6 +100,9 @@ YouLead::YouLead() {
 
     curl_global_init(CURL_GLOBAL_ALL);
     m_curl = curl_easy_init();
+
+    // try to get some scores to test leaderboards are availability
+    std::vector<Score> topScores = getTopThree();
 }
 
 User YouLead::getLocalUser() {
@@ -208,7 +211,21 @@ Score YouLead::addScore(const std::string &id, const std::string &username, cons
     Score score;
 
     if (!m_available || !m_curl) {
-        return score;
+        // local score (TODO: get read of c2d_renderer call)
+        auto *io = c2d_renderer->getIo();
+        char *scoreData = nullptr;
+        int oldScore = 0;
+        char *endPtr;
+        if (io->read(io->getDataPath() + "score.bin", &scoreData, sizeof(int)) > 0) {
+            oldScore = (int) strtol(scoreData, &endPtr, 10);
+            free(scoreData);
+        }
+        if (_score > oldScore) {
+            io->write(io->getDataPath() + "score.bin", std::to_string(_score).c_str(), sizeof(int));
+        } else {
+            _score = oldScore;
+        }
+        return Score(id, username, _score, 1);
     }
 
     // base 64 data
