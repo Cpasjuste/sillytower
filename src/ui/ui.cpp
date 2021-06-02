@@ -160,10 +160,14 @@ bool Ui::onInput(Input::Player *players) {
         m_game->getInput()->setRepeatDelay(0);
     } else if (players[0].keys & Input::Key::Fire5) {
         m_game->getMusic()->playPrev();
-        m_game->delay(150);
+        if (!title->isVisible()) {
+            m_game->delay(150);
+        }
     } else if (players[0].keys & Input::Key::Fire6) {
         m_game->getMusic()->playNext();
-        m_game->delay(150);
+        if (!title->isVisible()) {
+            m_game->delay(150);
+        }
     }
 
     return Rectangle::onInput(players);
