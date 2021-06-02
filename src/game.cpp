@@ -14,10 +14,6 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     // for local score
     Game::getIo()->create(Game::getIo()->getDataPath() + "SillyTowerData");
 
-    // music
-    music = new Music();
-    music->load(Game::getIo()->getRomFsPath() + "1037870_-Northstar-.mp3");
-
     // leaderboards !
     leaderboard = new YouLead();
 
@@ -69,6 +65,9 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     // ui view
     ui = new Ui(this);
     Game::add(ui);
+
+    // music
+    music = new MusicPlayer(this);
 
     gameView->setVisibility(Visibility::Hidden);
     world->setPaused(true);

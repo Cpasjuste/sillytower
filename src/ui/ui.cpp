@@ -5,6 +5,7 @@
 #include "game.h"
 #include "ui.h"
 #include "topplayers.h"
+#include "uimusic.h"
 
 Ui::Ui(Game *game) : Rectangle(game->getSize()) {
 
@@ -69,6 +70,11 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     pressStart->setVisibility(Visibility::Hidden);
     Ui::add(pressStart);
 
+    uiMusic = new UiMusic({Ui::getSize().x - 4, Ui::getSize().y - 4, 310, 18 * 2 + 8},
+                          m_game->getColor(Game::SillyColor::green), m_game->getColor(Game::SillyColor::pink), font);
+    uiMusic->setOrigin(Origin::BottomRight);
+    Ui::add(uiMusic);
+
     m_game->getInput()->setRepeatDelay(10000);
 }
 
@@ -105,11 +111,15 @@ void Ui::hideGameOver() {
     }
 }
 
+void Ui::showMusicPlayer(const std::string &name, const std::string &author) {
+    uiMusic->show(name, author);
+}
+
 void Ui::onUpdate() {
     if (!gameStarted) {
         float elapsed = splashClock.getElapsedTime().asSeconds();
         if (elapsed > 14) {
-            m_game->getMusic()->play();
+            m_game->getMusic()->play(0);
             m_game->getGameView()->setVisibility(c2d::Visibility::Visible, true);
             title->setVisibility(Visibility::Visible, true);
             pressStart->setVisibility(Visibility::Visible, true);
@@ -132,7 +142,7 @@ bool Ui::onInput(Input::Player *players) {
     if (!gameStarted) {
         if (players[0].keys & Input::Key::Start) {
             if (buttonPressCount > 0) {
-                m_game->getMusic()->play();
+                m_game->getMusic()->play(0);
                 splashKyuhenTex->setVisibility(Visibility::Hidden, false);
                 splashCpasTex->setVisibility(Visibility::Hidden, false);
                 m_game->getGameView()->setVisibility(c2d::Visibility::Visible, true);
@@ -148,6 +158,12 @@ bool Ui::onInput(Input::Player *players) {
         scoreText->setVisibility(Visibility::Visible, true);
         m_game->start();
         m_game->getInput()->setRepeatDelay(0);
+    } else if (players[0].keys & Input::Key::Fire5) {
+        m_game->getMusic()->playPrev();
+        m_game->delay(150);
+    } else if (players[0].keys & Input::Key::Fire6) {
+        m_game->getMusic()->playNext();
+        m_game->delay(150);
     }
 
     return Rectangle::onInput(players);

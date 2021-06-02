@@ -5,13 +5,13 @@
 #ifndef SILLYTOWER_UI_H
 #define SILLYTOWER_UI_H
 
-#include "cross2d/c2d.h"
-
 using namespace c2d;
 
 class Game;
 
 class UiTopPlayers;
+
+class UiMusic;
 
 class Ui : public Rectangle {
 
@@ -27,6 +27,8 @@ public:
     void showGameOver();
 
     void hideGameOver();
+
+    void showMusicPlayer(const std::string &name, const std::string &author);
 
     BMFont *getFont() {
         return font;
@@ -50,6 +52,9 @@ private:
 
     // top players
     UiTopPlayers *topPlayers;
+
+    // music ui
+    UiMusic *uiMusic;
 
     // splashes
     C2DClock splashClock;

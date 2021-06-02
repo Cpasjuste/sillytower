@@ -101,8 +101,10 @@ YouLead::YouLead() {
     curl_global_init(CURL_GLOBAL_ALL);
     m_curl = curl_easy_init();
 
+#ifdef NDEBUG
     // try to get some scores to test leaderboards are availability
     std::vector<Score> topScores = getTopThree();
+#endif
 }
 
 User YouLead::getLocalUser() {

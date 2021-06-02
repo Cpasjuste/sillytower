@@ -7,6 +7,7 @@
 
 #include <random>
 
+#include "cross2d/c2d.h"
 #include "ui.h"
 #include "cube.h"
 #include "youlead.h"
@@ -58,7 +59,7 @@ public:
         return leaderboard;
     }
 
-    Music *getMusic() {
+    MusicPlayer *getMusic() {
         return music;
     }
 
@@ -89,7 +90,7 @@ private:
     PhysicsWorld *world;
     YouLead *leaderboard;
     Rectangle *gameView;
-    Music *music;
+    MusicPlayer *music;
 
     // sprites
     Texture *spriteSheet = nullptr;

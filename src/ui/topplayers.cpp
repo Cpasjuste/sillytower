@@ -10,6 +10,8 @@ UiTopPlayers::UiTopPlayers(Game *game, Ui *ui, const FloatRect &rect) : Rectangl
     UiTopPlayers::setFillColor(Color::Transparent);
     UiTopPlayers::setOutlineColor(Color::Black);
     UiTopPlayers::setOutlineThickness(2);
+    //UiTopPlayers::setCornersRadius(5);
+    //UiTopPlayers::setCornerPointCount(8);
 
     Text *title = new Text("TOP SCORES", C2D_DEFAULT_CHAR_SIZE, ui->getFont());
     title->setOrigin(Origin::BottomRight);
@@ -71,6 +73,8 @@ UiTopPlayers::ScoreItem::ScoreItem(Ui *ui, const FloatRect &rect, Texture *cupTe
                                    const Color &cupColor, const Color &fillColor) : RectangleShape(rect) {
 
     UiTopPlayers::ScoreItem::setFillColor(fillColor);
+    //UiTopPlayers::ScoreItem::setCornersRadius(5);
+    //UiTopPlayers::ScoreItem::setCornerPointCount(8);
 
     cupSprite = new Sprite(cupTex);
     cupSprite->setPosition(8, 8);

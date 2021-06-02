@@ -9,25 +9,43 @@
 #include <SDL2/SDL_mixer.h>
 #include <string>
 
-class Music {
+class MusicPlayer {
 
 public:
-    Music();
+    class PlaylistItem {
+    public:
+        PlaylistItem(const std::string &path, const std::string &name, const std::string &author) {
+            m_path = path;
+            m_name = name;
+            m_author = author;
+        }
 
-    ~Music();
+        std::string m_path;
+        std::string m_name;
+        std::string m_author;
+    };
 
-    bool load(const std::string &path);
+    explicit MusicPlayer(Game *game);
 
-    void play();
+    ~MusicPlayer();
+
+    bool play(size_t pos);
+
+    bool playNext();
+
+    bool playPrev();
 
     void pause();
 
     void resume();
 
-    void unload();
-
 private:
-    Mix_Music *music = nullptr;
+
+    Game *m_game;
+    Mix_Music *m_music = nullptr;
+    std::vector<PlaylistItem> m_playlist;
+    int m_playlistPos = 0;
+    bool m_available = false;
 };
 
 #endif //SILLYTOWER_MUSIC_H
