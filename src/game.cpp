@@ -18,7 +18,7 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     leaderboard = new YouLead();
 
     // sprites
-    spriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "spritesheet.png");
+    spriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "textures/spritesheet.png");
 
     // add physics (box2d) world to a "game view" for "camera" scaling
     gameView = new Rectangle(Game::getSize());

@@ -4,7 +4,7 @@
 
 #include "cross2d/c2d.h"
 #include "game.h"
-#include "topplayers.h"
+#include "uitopplayers.h"
 
 UiTopPlayers::UiTopPlayers(Game *game, Ui *ui, const FloatRect &rect) : RectangleShape(rect) {
     UiTopPlayers::setFillColor(Color::Transparent);
@@ -19,7 +19,7 @@ UiTopPlayers::UiTopPlayers(Game *game, Ui *ui, const FloatRect &rect) : Rectangl
     UiTopPlayers::add(title);
 
     // scores items
-    m_cupTex = new C2DTexture(game->getIo()->getRomFsPath() + "cup.png");
+    m_cupTex = new C2DTexture(game->getIo()->getRomFsPath() + "textures/cup.png");
     float itemHeight = rect.height / 3;
     // my score item
     m_myScore = new ScoreItem(ui, {0, -(itemHeight * 1.75f), rect.width, itemHeight}, m_cupTex,

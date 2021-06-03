@@ -4,7 +4,7 @@
 
 #include "game.h"
 #include "ui.h"
-#include "topplayers.h"
+#include "uitopplayers.h"
 #include "uimusic.h"
 
 Ui::Ui(Game *game) : Rectangle(game->getSize()) {
@@ -12,7 +12,7 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     m_game = game;
 
     font = new BMFont();
-    font->loadFromFile(m_game->getIo()->getRomFsPath() + "04b_19.fnt");
+    font->loadFromFile(m_game->getIo()->getRomFsPath() + "textures/04b_19.fnt");
     font->setOffset({0, -2});
 
     fade = new RectangleShape(Ui::getSize());
@@ -43,19 +43,19 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     topPlayers->setVisibility(Visibility::Hidden);
     Ui::add(topPlayers);
 
-    splashKyuhenTex = new C2DTexture(m_game->getIo()->getRomFsPath() + "splashscreen-kyuhen.png");
+    splashKyuhenTex = new C2DTexture(m_game->getIo()->getRomFsPath() + "textures/splashscreen-kyuhen.png");
     splashKyuhenTex->add(new TweenAlpha(0, 255, 3));
     splashKyuhenTex->setVisibility(Visibility::Hidden);
     Ui::add(splashKyuhenTex);
 
-    splashCpasTex = new C2DTexture(m_game->getIo()->getRomFsPath() + "splashscreen-cpasjuste.png");
+    splashCpasTex = new C2DTexture(m_game->getIo()->getRomFsPath() + "textures/splashscreen-cpasjuste.png");
     splashCpasTex->setOrigin(Origin::Center);
     splashCpasTex->setPosition(Ui::getSize().x / 2, Ui::getSize().y / 2);
     splashCpasTex->add(new TweenAlpha(0, 255, 3));
     splashCpasTex->setVisibility(Visibility::Hidden);
     Ui::add(splashCpasTex);
 
-    title = new C2DTexture(m_game->getIo()->getRomFsPath() + "title.png");
+    title = new C2DTexture(m_game->getIo()->getRomFsPath() + "textures/title.png");
     title->setOrigin(Origin::Center);
     title->setPosition(Ui::getSize().x / 2, (Ui::getSize().y / 2) - 64);
     title->add(new TweenAlpha(0, 255, 3));
