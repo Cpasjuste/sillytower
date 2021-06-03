@@ -13,16 +13,16 @@ Cube::Cube(Game *game, const FloatRect &rect) : RectangleShape(rect) {
 }
 
 void Cube::playTween(const Color &toColor) {
-    if (!tweenColor) {
-        tweenColor = new TweenColor(getFillColor(), toColor, 0.5f, TweenLoop::PingPong);
-        Cube::add(tweenColor);
+    if (!m_tweenColor) {
+        m_tweenColor = new TweenColor(getFillColor(), toColor, 0.5f, TweenLoop::PingPong);
+        Cube::add(m_tweenColor);
     }
-    tweenColor->play();
+    m_tweenColor->play();
 }
 
 void Cube::stopTween(const Color &toColor) {
-    if (tweenColor) {
-        tweenColor->setState(TweenState::Stopped);
+    if (m_tweenColor) {
+        m_tweenColor->setState(TweenState::Stopped);
         setFillColor(toColor);
     }
 }

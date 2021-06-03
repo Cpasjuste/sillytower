@@ -137,13 +137,11 @@ Cube *Game::spawnCube(float y) {
             cameraScaleTween->setFromTo(gameView->getScale(), {scaling, scaling});
             cameraScaleTween->play();
         }
-
-        if (st::Utility::isMultipleOf(spawnedCubes, STATIC_CUBE_MULTIPLIER)) {
-            // set cube to static every 20 cubes
+        // special cubes
+        if (cube->getMode() == Cube::Mode::Static) {
             cube->stopTween(Color::GrayLight);
             cube->getPhysicsBody()->SetType(b2_staticBody);
-        } else if (st::Utility::isMultipleOf(spawnedCubes, STATIC_CUBE_MULTIPLIER / 2)) {
-            // set cube to "exploding" every 10 cubes
+        } else if (cube->getMode() == Cube::Mode::Exploding) {
             cube->stopTween(Color::Red);
             b2Body *body = cube->getPhysicsBody();
             for (b2ContactEdge *edge = body->GetContactList(); edge; edge = edge->next) {
@@ -178,11 +176,15 @@ Cube *Game::spawnCube(float y) {
     spawnedCubes++;
 
     if (cube) {
-        if (st::Utility::isMultipleOf(spawnedCubes, STATIC_CUBE_MULTIPLIER)) {
-            // set cube to static every 20 cubes
+        if (st::Utility::isMultipleOf(spawnedCubes, staticMultiplier)) {
+            // set cube to static every ~20 cubes
+            staticMultiplier = Utility::random(STATIC_CUBE_MULTIPLIER - 5, STATIC_CUBE_MULTIPLIER + 5);
+            c->setMode(Cube::Mode::Static);
             c->playTween(Color::GrayLight);
-        } else if (st::Utility::isMultipleOf(spawnedCubes, STATIC_CUBE_MULTIPLIER / 2)) {
-            // set cube to "exploding" every 10 cubes
+        } else if (st::Utility::isMultipleOf(spawnedCubes, explodingMultiplier)) {
+            // set cube to "exploding" every ~10 cubes
+            explodingMultiplier = Utility::random(EXPLODING_CUBE_MULTIPLIER - 5, EXPLODING_CUBE_MULTIPLIER + 5);
+            c->setMode(Cube::Mode::Exploding);
             c->playTween(Color::Red);
         }
     }

@@ -20,6 +20,7 @@
 #define CLOUD_MAX 30
 #define STARS_MAX 100
 #define STATIC_CUBE_MULTIPLIER 20
+#define EXPLODING_CUBE_MULTIPLIER 10
 
 class Game : public C2DRenderer, b2ContactListener {
 
@@ -102,6 +103,8 @@ private:
     std::vector<Cube *> cubes;
     bool needSpawn = false;
     int spawnedCubes = 0;
+    int staticMultiplier = Utility::random(STATIC_CUBE_MULTIPLIER - 5, STATIC_CUBE_MULTIPLIER + 5);
+    int explodingMultiplier = Utility::random(EXPLODING_CUBE_MULTIPLIER - 5, EXPLODING_CUBE_MULTIPLIER + 5);
 
     // camera
     TweenScale *cameraScaleTween;

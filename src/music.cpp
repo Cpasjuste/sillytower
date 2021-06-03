@@ -31,7 +31,7 @@ MusicPlayer::MusicPlayer(Game *game) {
 
     Mix_HookMusicFinished(OnMusicFinished);
 
-    std::string path = m_game->getIo()->getDataPath();
+    std::string path = m_game->getIo()->getRomFsPath() + "musics/";
     // GREAT
     m_playlist.emplace_back(path + "1037870_-Northstar-.mp3", "-Northstar-", "PredatorMusic");  // LICENCE OK
     m_playlist.emplace_back(path + "952516_Pink-Sand.mp3", "Pink Sand", "EX-LYD"); // LICENCE OK
