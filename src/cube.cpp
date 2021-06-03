@@ -29,7 +29,7 @@ void Cube::stopTween(const Color &toColor) {
 
 void Cube::onUpdate() {
 
-    if (getRotation() > 15) {
+    if (getRotation() > 15 && getRotation() < 345) {
         //printf("WARNING: %f\n", getRotation());
     }
 

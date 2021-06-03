@@ -18,7 +18,7 @@ Cloud::Cloud(Game *game) : Sprite() {
 
 void Cloud::reset() {
     // speed 0.1f <> 0.5f
-    m_speed = Utility::random(1.0f, 3.0f);
+    m_speed = Utility::random(0.5f, 2.0f);
     // position (x)
     float width = m_game->getGameView()->getSize().x;
     float scale = m_game->getGameView()->getScale().x;

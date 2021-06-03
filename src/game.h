@@ -5,13 +5,12 @@
 #ifndef SILLYTOWER_GAME_H
 #define SILLYTOWER_GAME_H
 
-#include <random>
-
 #include "cross2d/c2d.h"
 #include "ui.h"
 #include "cube.h"
 #include "youlead.h"
 #include "music.h"
+#include "background.h"
 
 #define CUBE_MIN_WIDTH 100
 #define CUBE_MAX_WIDTH 300
@@ -21,6 +20,7 @@
 #define STARS_MAX 100
 #define STATIC_CUBE_MULTIPLIER 20
 #define EXPLODING_CUBE_MULTIPLIER 10
+#define CAMERA_MIN_SCALE 0.3f
 
 class Game : public C2DRenderer, b2ContactListener {
 
@@ -50,6 +50,10 @@ public:
 
     Rectangle *getGameView() {
         return gameView;
+    }
+
+    Background *getBackground() {
+        return background;
     }
 
     Ui *getUi() {
@@ -91,6 +95,7 @@ private:
     PhysicsWorld *world;
     YouLead *leaderboard;
     Rectangle *gameView;
+    Background *background;
     MusicPlayer *music;
 
     // sprites
@@ -108,6 +113,7 @@ private:
 
     // camera
     TweenScale *cameraScaleTween;
+    TweenPosition *cameraPosTween;
 
     // colors
     std::vector<Color> colors = {

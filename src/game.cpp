@@ -28,10 +28,10 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     Game::add(gameView);
 
     // background
-    auto bg = new Background({Game::getSize().x / 2, Game::getSize().y,
-                              Game::getSize().x * 20, Game::getSize().y * 10});
-    bg->setOrigin(Origin::Bottom);
-    gameView->add(bg);
+    background = new Background({Game::getSize().x / 2, Game::getSize().y,
+                                 Game::getSize().x / CAMERA_MIN_SCALE, Game::getSize().y * 10});
+    background->setOrigin(Origin::Bottom);
+    gameView->add(background);
 
     // clouds
     for (int i = 0; i < CLOUD_MAX; i++) {
@@ -40,9 +40,11 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
     // stars
     for (int i = 0; i < STARS_MAX; i++) {
-        int x = Utility::random(-6000, 6000);
-        int y = Utility::random(-7000, -4000);
-        gameView->add(new RectangleShape({(float) x, (float) y, 16, 16}));
+        int x = Utility::random(-(int) (((gameView->getSize().x / CAMERA_MIN_SCALE) / 2) - (gameView->getSize().x / 2)),
+                                (int) (((gameView->getSize().x / CAMERA_MIN_SCALE) / 2) + (gameView->getSize().x / 2)));
+        int y = Utility::random(-6000, -4000);
+        float wh = Utility::random(4.0f, 8.0f);
+        gameView->add(new RectangleShape({(float) x, (float) y, wh, wh}));
     }
 
     // create physics world and add it to the game view
@@ -58,9 +60,11 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     floor = floorRect->addPhysicsBody(world, b2_staticBody, 0);
     world->add(floorRect);
 
-    // "camera" for scale effect
-    cameraScaleTween = new TweenScale(Game::getScale(), Game::getScale(), 1);
+    // "camera" tweeners
+    cameraScaleTween = new TweenScale(gameView->getScale(), gameView->getScale(), 1);
     gameView->add(cameraScaleTween);
+    cameraPosTween = new TweenPosition(gameView->getPosition(), gameView->getPosition(), 1);
+    gameView->add(cameraPosTween);
 
     // ui view
     ui = new Ui(this);
@@ -69,7 +73,7 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     // music
     music = new MusicPlayer(this);
 
-    gameView->setVisibility(Visibility::Hidden);
+    gameView->setVisibility(Visibility::Hidden, false);
     world->setPaused(true);
     ui->start();
 }
@@ -126,17 +130,30 @@ void Game::BeginContact(b2Contact *contact) {
     }
 }
 
-Cube *Game::spawnCube(float y) {
+Cube *Game::spawnCube(float _y) {
+
+    float screenBottom = gameView->getPosition().y - getSize().y;
+    float screenTop = (getSize().y / gameView->getScale().y) + screenBottom;
+    float maxHeight = screenTop - (5 * CUBE_MAX_HEIGHT);
 
     // "camera" zoom
     if (cube) {
-        float screenTop = getSize().y / gameView->getScale().y;
-        float maxHeight = screenTop - (5 * CUBE_MAX_HEIGHT);
         if (cube->getPosition().y > maxHeight) {
-            float scaling = gameView->getScale().y - (0.1f * gameView->getScale().y);
-            cameraScaleTween->setFromTo(gameView->getScale(), {scaling, scaling});
-            cameraScaleTween->play();
+            if (gameView->getScale().y > CAMERA_MIN_SCALE) {
+                float scaling = gameView->getScale().y - (0.1f * gameView->getScale().y);
+                cameraScaleTween->setFromTo(gameView->getScale(), {scaling, scaling});
+                cameraScaleTween->play();
+            } else {
+                Vector2f newPos = {gameView->getPosition().x,
+                                   gameView->getPosition().y + (CUBE_MAX_HEIGHT * gameView->getScale().y)};
+                cameraPosTween->setFromTo(gameView->getPosition(), newPos, 1);
+                cameraPosTween->play();
+            }
         }
+        //DEBUG TODO:
+        cube->stopTween(Color::GrayLight);
+        cube->getPhysicsBody()->SetType(b2_staticBody);
+#if 0
         // special cubes
         if (cube->getMode() == Cube::Mode::Static) {
             cube->stopTween(Color::GrayLight);
@@ -162,13 +179,14 @@ Cube *Game::spawnCube(float y) {
             delete (cube);
             cube = nullptr;
         }
+#endif
     }
 
     float x = Utility::random((Game::getSize().x / 2) - 100, (Game::getSize().x / 2) + 100);
+    float y = _y > 0 ? _y : ((getSize().y + screenBottom) / gameView->getScale().y);
     int w = Utility::random(CUBE_MIN_WIDTH, CUBE_MAX_WIDTH);
     int h = Utility::random(CUBE_MIN_HEIGHT, CUBE_MAX_HEIGHT);
-    FloatRect rect = {(float) x - ((float) w / 2), y > 0 ? y : getSize().y / gameView->getScale().y,
-                      (float) w, (float) h};
+    FloatRect rect = {(float) x - ((float) w / 2), y, (float) w, (float) h};
     auto c = new Cube(this, rect);
     c->getPhysicsBody()->GetUserData().pointer = (uintptr_t) c;
     world->add(c);
