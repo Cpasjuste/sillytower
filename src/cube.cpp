@@ -6,6 +6,7 @@
 #include "cube.h"
 
 Cube::Cube(Game *game, const FloatRect &rect) : RectangleShape(rect) {
+    m_game = game;
     Cube::setFillColor(game->getColorRandom());
     Cube::setOutlineColor(Color::Black);
     Cube::setOutlineThickness(2);
@@ -29,8 +30,17 @@ void Cube::stopTween(const Color &toColor) {
 
 void Cube::onUpdate() {
 
-    if (getRotation() > 15) {
+#error handle warning
+    if (!warningDone && (getRotation() > 15 && getRotation() < 345)) {
+        /*
+        TweenAlpha *tween = m_game->getWarningTween();
+        if(tween->getState() == TweenState::Playing && tween->getDirection() == TweenDirection::Forward) {
+
+        }
         //printf("WARNING: %f\n", getRotation());
+        m_game->getWarningShape()->setVisibility(Visibility::Visible, true);
+        warningClock.restart();
+        */
     }
 
     RectangleShape::onUpdate();

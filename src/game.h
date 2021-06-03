@@ -72,6 +72,14 @@ public:
         return spriteSheet;
     }
 
+    RectangleShape *getWarningShape() {
+        return warningShape;
+    }
+
+    TweenAlpha *getWarningTween() {
+        return warningTween;
+    }
+
     Color getColor(const SillyColor &color) const {
         return colors[color];
     };
@@ -93,7 +101,7 @@ private:
     Rectangle *gameView;
     MusicPlayer *music;
 
-    // sprites
+    // clouds sprites sheet
     Texture *spriteSheet = nullptr;
 
     b2Body *floor = nullptr;
@@ -108,6 +116,10 @@ private:
 
     // camera
     TweenScale *cameraScaleTween;
+
+    // cube rotation warning (fade)
+    RectangleShape *warningShape;
+    TweenAlpha *warningTween;
 
     // colors
     std::vector<Color> colors = {

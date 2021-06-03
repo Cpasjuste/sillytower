@@ -37,8 +37,11 @@ public:
 private:
     void onUpdate() override;
 
+    Game *m_game;
     TweenColor *m_tweenColor = nullptr;
     Mode m_mode = Normal;
+    C2DClock warningClock;
+    bool warningDone = false;
 };
 
 #endif //SILLYTOWER_CUBE_H

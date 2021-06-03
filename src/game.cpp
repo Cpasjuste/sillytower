@@ -33,6 +33,16 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     bg->setOrigin(Origin::Bottom);
     gameView->add(bg);
 
+    // fade warning (cube rotation)
+    warningShape = new RectangleShape({bg->getSize().x, bg->getSize().y * 2});
+    warningShape->setPosition(bg->getPosition());
+    warningShape->setOrigin(Origin::Bottom);
+    warningShape->setFillColor(Color::Red);
+    warningTween = new TweenAlpha(0, 150, 0.5f);
+    warningShape->add(warningTween);
+    warningShape->setVisibility(Visibility::Hidden, false);
+    gameView->add(warningShape);
+
     // clouds
     for (int i = 0; i < CLOUD_MAX; i++) {
         gameView->add(new Cloud(this));
