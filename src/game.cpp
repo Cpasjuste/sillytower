@@ -41,8 +41,9 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     // stars
     for (int i = 0; i < STARS_MAX; i++) {
         int x = Utility::random(-6000, 6000);
-        int y = Utility::random(-7000, -4000);
-        gameView->add(new RectangleShape({(float) x, (float) y, 16, 16}));
+        int y = Utility::random(-6500, -3500);
+        float wh = Utility::random(10.0f, 16.0f);
+        gameView->add(new RectangleShape({(float) x, (float) y, wh, wh}));
     }
 
     // create physics world and add it to the game view
@@ -51,7 +52,8 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     gameView->add(world);
 
     // floor body
-    auto floorRect = new RectangleShape({-(Game::getSize().x / 2) * 10, 0, Game::getSize().x * 20, 32});
+    auto floorRect = new RectangleShape({-(Game::getSize().x * 10) + (Game::getSize().x / 2), 0,
+                                         Game::getSize().x * 20, 32});
     floorRect->setOutlineColor(Color::Black);
     floorRect->setOutlineThickness(2);
     floorRect->setFillColor(Color::GrayLight);
@@ -128,8 +130,8 @@ void Game::BeginContact(b2Contact *contact) {
 
 Cube *Game::spawnCube(float y) {
 
-    // "camera" zoom
     if (cube) {
+        // "camera" zoom effect
         float screenTop = getSize().y / gameView->getScale().y;
         float maxHeight = screenTop - (5 * CUBE_MAX_HEIGHT);
         if (cube->getPosition().y > maxHeight) {

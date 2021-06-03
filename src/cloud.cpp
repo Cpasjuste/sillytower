@@ -11,7 +11,8 @@ Cloud::Cloud(Game *game) : Sprite() {
     m_game = game;
     setTexture(m_game->getSpriteSheet());
     setTextureRect(st::Utility::getTextureRect(getTexture(), 4, Utility::random(0, 4), 0));
-    Cloud::setScale(2, 2);
+    float scaling = Utility::random(2.0f, 4.0f);
+    Cloud::setScale(scaling, scaling);
     Cloud::setOrigin(Origin::Center);
     reset();
 }
@@ -42,7 +43,7 @@ void Cloud::onUpdate() {
     float width = m_game->getGameView()->getSize().x;
     float scale = m_game->getGameView()->getScale().x;
     float screenRight = (((width / scale) - width) / 2) + width;
-    if (getPosition().x > screenRight + getSize().x) {
+    if (getPosition().x > screenRight + (getSize().x * getScale().x)) {
         reset();
     }
 
