@@ -32,7 +32,7 @@ void Cloud::reset() {
     float y = Utility::random(min, max);
     //printf("min: %f, max: %f, y: %f\n", min, max, y);
 
-    Cloud::setPosition(x, y);
+    setPosition(x, y);
     setTextureRect(st::Utility::getTextureRect(getTexture(), 4, Utility::random(0, 4), 0));
 }
 

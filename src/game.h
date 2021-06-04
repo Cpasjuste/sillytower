@@ -12,6 +12,7 @@
 #include "cube.h"
 #include "youlead.h"
 #include "music.h"
+#include "bird.h"
 
 #define CUBE_MIN_WIDTH 100
 #define CUBE_MAX_WIDTH 300
