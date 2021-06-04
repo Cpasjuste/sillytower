@@ -38,7 +38,7 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     warningShape->setPosition(bg->getPosition());
     warningShape->setOrigin(Origin::Bottom);
     warningShape->setFillColor(Color::Red);
-    warningTween = new TweenAlpha(0, 150, 0.5f);
+    warningTween = new TweenAlpha(0, 150, 1.0f);
     warningShape->add(warningTween);
     warningShape->setVisibility(Visibility::Hidden, false);
     gameView->add(warningShape);
@@ -123,7 +123,6 @@ void Game::BeginContact(b2Contact *contact) {
             if (!secondCube) {
                 secondCube = body1 == floor ? body2 : body1;
             } else {
-                printf("GAME OVER! score: %li\n", getScore());
                 world->setPaused(true);
                 ui->showGameOver();
             }

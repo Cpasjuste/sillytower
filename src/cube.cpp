@@ -29,18 +29,15 @@ void Cube::stopTween(const Color &toColor) {
 }
 
 void Cube::onUpdate() {
-
-#error handle warning
-    if (!warningDone && (getRotation() > 15 && getRotation() < 345)) {
-        /*
-        TweenAlpha *tween = m_game->getWarningTween();
-        if(tween->getState() == TweenState::Playing && tween->getDirection() == TweenDirection::Forward) {
-
-        }
-        //printf("WARNING: %f\n", getRotation());
+    if (!warned && (getRotation() > 10 && getRotation() < 350)) {
         m_game->getWarningShape()->setVisibility(Visibility::Visible, true);
         warningClock.restart();
-        */
+        warned = true;
+    } else if (warned && !warnedDone && warningClock.getElapsedTime().asSeconds() > 2) {
+        if (!getPhysicsBody()->IsAwake()) {
+            m_game->getWarningShape()->setVisibility(Visibility::Hidden, true);
+            warnedDone = true;
+        }
     }
 
     RectangleShape::onUpdate();

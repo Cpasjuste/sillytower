@@ -87,6 +87,7 @@ void Ui::setScore(long score) {
 }
 
 void Ui::showGameOver() {
+    m_game->getWarningShape()->setVisibility(Visibility::Hidden, true);
     fade->setVisibility(Visibility::Visible, true);
     gameOverText->setVisibility(Visibility::Visible, true);
     topPlayers->setVisibility(Visibility::Visible, true);
@@ -102,6 +103,7 @@ void Ui::showGameOver() {
 
 void Ui::hideGameOver() {
     if (gameOverText->isVisible()) {
+        m_game->getWarningShape()->setVisibility(Visibility::Hidden, true);
         fade->setVisibility(Visibility::Hidden, true);
         gameOverText->setVisibility(Visibility::Hidden, true);
         topPlayers->setVisibility(Visibility::Hidden, true);
