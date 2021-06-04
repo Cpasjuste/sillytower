@@ -62,13 +62,19 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     title->setVisibility(Visibility::Hidden);
     Ui::add(title);
 
-    pressStart = new Text("PRESS START", C2D_DEFAULT_CHAR_SIZE, font);
-    pressStart->setOrigin(Origin::Bottom);
-    pressStart->setPosition(Ui::getSize().x / 2, Ui::getSize().y - 128);
-    pressStart->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
-    pressStart->add(new TweenAlpha(0, 255, 2, TweenLoop::PingPong));
-    pressStart->setVisibility(Visibility::Hidden);
-    Ui::add(pressStart);
+    pressStartText = new Text("PRESS START", C2D_DEFAULT_CHAR_SIZE, font);
+    pressStartText->setOrigin(Origin::Bottom);
+    pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - 128);
+    pressStartText->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
+    pressStartText->add(new TweenAlpha(0, 255, 2, TweenLoop::PingPong));
+    pressStartText->setVisibility(Visibility::Hidden);
+    Ui::add(pressStartText);
+
+    bonusText = new Text("+10", C2D_DEFAULT_CHAR_SIZE, font);
+    bonusText->setOrigin(Origin::Center);
+    bonusText->add(new TweenScale({0, 0}, {1, 1}, 0.25f));
+    bonusText->setVisibility(Visibility::Hidden, false);
+    Ui::add(bonusText);
 
     uiMusic = new UiMusic({Ui::getSize().x - 4, Ui::getSize().y - 4, 310, 18 * 2 + 8},
                           m_game->getColor(Game::SillyColor::green), m_game->getColor(Game::SillyColor::pink), font);
@@ -91,9 +97,9 @@ void Ui::showGameOver() {
     fade->setVisibility(Visibility::Visible, true);
     gameOverText->setVisibility(Visibility::Visible, true);
     topPlayers->setVisibility(Visibility::Visible, true);
-    pressStart->setVisibility(Visibility::Visible, true);
+    pressStartText->setVisibility(Visibility::Visible, true);
     scoreText->setVisibility(Visibility::Hidden, true);
-    pressStart->setPosition(Ui::getSize().x / 2, Ui::getSize().y - 64);
+    pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - 64);
     m_game->getInput()->setRepeatDelay(10000);
     // scores
     Score myScore = m_game->getLeaderboard()->addScore(m_game->getScore());
@@ -108,9 +114,15 @@ void Ui::hideGameOver() {
         gameOverText->setVisibility(Visibility::Hidden, true);
         topPlayers->setVisibility(Visibility::Hidden, true);
         scoreText->setVisibility(Visibility::Visible, true);
-        pressStart->setVisibility(Visibility::Hidden, true);
+        pressStartText->setVisibility(Visibility::Hidden, true);
         m_game->getInput()->setRepeatDelay(0);
     }
+}
+
+void Ui::showBonusText(const Vector2f &pos, const std::string &text) {
+    bonusText->setPosition(pos);
+    bonusText->setVisibility(Visibility::Visible, true);
+    bonusTextClock.restart();
 }
 
 void Ui::showMusicPlayer(const std::string &name, const std::string &author) {
@@ -124,7 +136,7 @@ void Ui::onUpdate() {
             m_game->getMusic()->play(0);
             m_game->getGameView()->setVisibility(c2d::Visibility::Visible, true);
             title->setVisibility(Visibility::Visible, true);
-            pressStart->setVisibility(Visibility::Visible, true);
+            pressStartText->setVisibility(Visibility::Visible, true);
             gameStarted = true;
         } else if (elapsed > 11 && elapsed <= 14 && splashCpasTex->isVisible()) {
             splashCpasTex->setVisibility(Visibility::Hidden, true);
@@ -134,6 +146,10 @@ void Ui::onUpdate() {
             splashKyuhenTex->setVisibility(Visibility::Hidden, true);
         } else if (elapsed > 2 && elapsed <= 5 && !splashKyuhenTex->isVisible()) {
             splashKyuhenTex->setVisibility(Visibility::Visible, true);
+        }
+    } else {
+        if (bonusText->isVisible() && bonusTextClock.getElapsedTime().asSeconds() > 2) {
+            bonusText->setVisibility(Visibility::Hidden, true);
         }
     }
 
@@ -149,14 +165,14 @@ bool Ui::onInput(Input::Player *players) {
                 splashCpasTex->setVisibility(Visibility::Hidden, false);
                 m_game->getGameView()->setVisibility(c2d::Visibility::Visible, true);
                 title->setVisibility(Visibility::Visible, true);
-                pressStart->setVisibility(Visibility::Visible, true);
+                pressStartText->setVisibility(Visibility::Visible, true);
                 gameStarted = true;
             }
             buttonPressCount++;
         }
     } else if (players[0].keys & Input::Key::Start && title->isVisible()) {
         title->setVisibility(Visibility::Hidden, true);
-        pressStart->setVisibility(Visibility::Hidden, false);
+        pressStartText->setVisibility(Visibility::Hidden, false);
         scoreText->setVisibility(Visibility::Visible, true);
         m_game->start();
         m_game->getInput()->setRepeatDelay(0);
@@ -178,3 +194,4 @@ bool Ui::onInput(Input::Player *players) {
 Ui::~Ui() {
     delete (font);
 }
+

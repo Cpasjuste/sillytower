@@ -10,7 +10,11 @@ public:
     Bird(Game *game, c2d::Texture *texture);
 
 private:
+    void onUpdate() override;
+
     Game *m_game;
+    C2DClock m_clock;
+    float m_minY;
 };
 
 #endif //SILLYTOWER_BIRD_H

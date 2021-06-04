@@ -22,6 +22,7 @@
 #define STARS_MAX 100
 #define STATIC_CUBE_MULTIPLIER 20
 #define EXPLODING_CUBE_MULTIPLIER 10
+#define BIRD_SPAWN_MULTIPLIER 10
 
 class Game : public C2DRenderer, b2ContactListener {
 
@@ -42,6 +43,16 @@ public:
     void start();
 
     Cube *spawnCube(float y = 0);
+
+    void removeCube();
+
+    Cube *getCube() {
+        return cube;
+    }
+
+    void setCube(Cube *c) {
+        cube = c;
+    }
 
     void BeginContact(b2Contact *contact) override;
 
@@ -65,8 +76,12 @@ public:
         return music;
     }
 
+    void addToScore(int bonus) {
+        score += bonus;
+    }
+
     long getScore() const {
-        return (long) spawnedCubes - 1;
+        return (long) score - 1;
     }
 
     Texture *getSpriteSheet() {
@@ -102,18 +117,21 @@ private:
     Rectangle *gameView;
     MusicPlayer *music;
 
-    // clouds sprites sheet
+    // sprites
     Texture *spriteSheet = nullptr;
+    Texture *birdSpriteSheet;
 
+    Bird *bird = nullptr;
     b2Body *floor = nullptr;
     b2Body *firstCube = nullptr;
     b2Body *secondCube = nullptr;
     Cube *cube = nullptr;
     std::vector<Cube *> cubes;
     bool needSpawn = false;
-    int spawnedCubes = 0;
+    int score = 0;
     int staticMultiplier = Utility::random(STATIC_CUBE_MULTIPLIER - 5, STATIC_CUBE_MULTIPLIER + 5);
     int explodingMultiplier = Utility::random(EXPLODING_CUBE_MULTIPLIER - 5, EXPLODING_CUBE_MULTIPLIER + 5);
+    int birdMultiplier = Utility::random(BIRD_SPAWN_MULTIPLIER - 5, BIRD_SPAWN_MULTIPLIER + 5);
 
     // camera
     TweenScale *cameraScaleTween;

@@ -28,6 +28,8 @@ public:
 
     void hideGameOver();
 
+    void showBonusText(const Vector2f &pos, const std::string &text);
+
     void showMusicPlayer(const std::string &name, const std::string &author);
 
     BMFont *getFont() {
@@ -43,7 +45,9 @@ private:
     BMFont *font;
     Text *scoreText;
     Text *gameOverText;
-    Text *pressStart;
+    Text *pressStartText;
+    Text *bonusText;
+    C2DClock bonusTextClock;
     Texture *title;
     RectangleShape *fade;
     TweenAlpha *fadeTween;

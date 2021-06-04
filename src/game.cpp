@@ -19,6 +19,7 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
     // sprites
     spriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "textures/spritesheet.png");
+    birdSpriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "/textures/bird.png");
 
     // add physics (box2d) world to a "game view" for "camera" scaling
     gameView = new Rectangle(Game::getSize());
@@ -97,7 +98,7 @@ void Game::start() {
     cubes.clear();
     cube = nullptr;
     firstCube = secondCube = nullptr;
-    spawnedCubes = 0;
+    score = 0;
     cube = spawnCube(getSize().y);
     firstCube = cube->getPhysicsBody();
 
@@ -114,6 +115,7 @@ void Game::BeginContact(b2Contact *contact) {
     ui->showGameOver();
     return;
 #endif
+
     b2Body *body1 = contact->GetFixtureA()->GetBody();
     b2Body *body2 = contact->GetFixtureB()->GetBody();
 
@@ -169,9 +171,7 @@ Cube *Game::spawnCube(float y) {
                     delete (c);
                 }
             }
-            cubes.erase(std::remove(cubes.begin(), cubes.end(), cube), cubes.end());
-            delete (cube);
-            cube = nullptr;
+            removeCube();
         }
     }
 
@@ -184,19 +184,25 @@ Cube *Game::spawnCube(float y) {
     c->getPhysicsBody()->GetUserData().pointer = (uintptr_t) c;
     world->add(c);
     cubes.push_back(c);
-    spawnedCubes++;
+    score++;
 
     if (cube) {
-        if (st::Utility::isMultipleOf(spawnedCubes, staticMultiplier)) {
+        if (st::Utility::isMultipleOf(score, staticMultiplier)) {
             // set cube to static every ~20 cubes
             staticMultiplier = Utility::random(STATIC_CUBE_MULTIPLIER - 5, STATIC_CUBE_MULTIPLIER + 5);
             c->setMode(Cube::Mode::Static);
             c->playTween(Color::GrayLight);
-        } else if (st::Utility::isMultipleOf(spawnedCubes, explodingMultiplier)) {
+        } else if (st::Utility::isMultipleOf(score, explodingMultiplier)) {
             // set cube to "exploding" every ~10 cubes
             explodingMultiplier = Utility::random(EXPLODING_CUBE_MULTIPLIER - 5, EXPLODING_CUBE_MULTIPLIER + 5);
             c->setMode(Cube::Mode::Exploding);
             c->playTween(Color::Red);
+        }
+
+        if (!bird && st::Utility::isMultipleOf(score, birdMultiplier)) {
+            birdMultiplier = Utility::random(BIRD_SPAWN_MULTIPLIER - 5, BIRD_SPAWN_MULTIPLIER + 5);
+            bird = new Bird(this, birdSpriteSheet);
+            world->add(bird);
         }
     }
 
@@ -207,11 +213,22 @@ Cube *Game::spawnCube(float y) {
     return c;
 }
 
-void Game::onUpdate() {
+void Game::removeCube() {
+    if (cube) {
+        cubes.erase(std::remove(cubes.begin(), cubes.end(), cube), cubes.end());
+        delete (cube);
+        cube = nullptr;
+    }
+}
 
+void Game::onUpdate() {
     if (needSpawn) {
         cube = spawnCube();
         needSpawn = false;
+    }
+    if (bird && !bird->isVisible()) {
+        delete (bird);
+        bird = nullptr;
     }
 
     Renderer::onUpdate();
@@ -245,5 +262,7 @@ bool Game::onInput(Input::Player *players) {
 Game::~Game() {
     delete (leaderboard);
     delete (spriteSheet);
+    delete (birdSpriteSheet);
     delete (music);
 }
+

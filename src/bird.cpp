@@ -4,6 +4,7 @@
 
 #include "cross2d/c2d.h"
 #include "game.h"
+#include "bird.h"
 
 using namespace c2d;
 
@@ -15,15 +16,67 @@ Bird::Bird(Game *game, Texture *texture) : AnimatedSprite(texture, {128, 128}, 4
     float width = m_game->getGameView()->getSize().x;
     float scale = m_game->getGameView()->getScale().x;
     float extend = (width / scale) - width;
-    float x = -((extend / 2) + getSize().x);
+    float x = -((extend / 2) + Bird::getSize().x);
     // position (y)
-    float height = m_game->getGameView()->getSize().y;
-    float min = -(height * 2.5f);
-    float max = min - (height * 2.5f);
-    float y = Utility::random(min, max);
-    //printf("min: %f, max: %f, y: %f\n", min, max, y);
+    float screenHeight = m_game->getSize().y / m_game->getGameView()->getScale().y;
+    m_minY = Utility::random(screenHeight * 0.3f, screenHeight * 0.7f);
+    // set bird pos
+    Bird::setPosition(x, m_minY);
+    Bird::addPhysicsBody(m_game->getPhysicsWorld(), b2_dynamicBody, 0.2f);
 
-    TODO
-    Bird::setPosition(x, y);
-    Bird::addPhysicsBody(m_game->getPhysicsWorld(), b2_dynamicBody, )
+    // disable collisions
+    b2Filter filter = Bird::getPhysicsBodyFixture()->GetFilterData();
+    filter.maskBits = 2;
+    Bird::getPhysicsBodyFixture()->SetFilterData(filter);
+
+    getPhysicsBody()->ApplyForce({600, 50}, getPhysicsBody()->GetWorldCenter(), true);
+    m_clock.restart();
+}
+
+void Bird::onUpdate() {
+
+    float width = m_game->getGameView()->getSize().x;
+    float scale = m_game->getGameView()->getScale().x;
+    float screenRight = (((width / scale) - width) / 2) + width;
+    if (getPosition().x > screenRight + (getSize().x * getScale().x)) {
+        removePhysicsBody();
+        setVisibility(Visibility::Hidden);
+        return;
+    }
+
+    if (!isVisible() || !getPhysicsBody()) {
+        return;
+    }
+
+    Cube *cube = m_game->getCube();
+    if (cube && cube->getGlobalBounds().intersects(getGlobalBounds())) {
+        // remove cube
+        m_game->removeCube();
+        Cube *c = m_game->spawnCube();
+        m_game->setCube(c);
+        removePhysicsBody();
+        setVisibility(Visibility::Hidden);
+        // show ui bonus text
+        float scaling = m_game->getGameView()->getScale().x;
+        float worldWidth = m_game->getGameView()->getSize().x / scaling;
+        float worldExtend = (worldWidth - m_game->getGameView()->getSize().x) / 2;
+        float birdHalfWidth = (getSize().x * scaling) / 2;
+        float birdHalfHeight = (getSize().y * scaling) / 2;
+        Vector2f screenPos = {((worldExtend + getPosition().x) * scaling) + birdHalfWidth,
+                              (m_game->getSize().y - (getPosition().y * scaling)) - birdHalfHeight};
+        m_game->getUi()->showBonusText(screenPos, "+10");
+        m_game->addToScore(10);
+        return;
+    }
+
+    if (m_clock.getElapsedTime().asSeconds() > 0.5f) {
+        getPhysicsBody()->ApplyForce({600, 0}, getPhysicsBody()->GetWorldCenter(), true);
+        m_clock.restart();
+    }
+
+    if (getPosition().y < m_minY) {
+        getPhysicsBody()->ApplyForce({0, 50}, getPhysicsBody()->GetWorldCenter(), true);
+    }
+
+    AnimatedSprite::onUpdate();
 }
