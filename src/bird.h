@@ -13,7 +13,6 @@ private:
     void onUpdate() override;
 
     Game *m_game;
-    C2DClock m_clock;
     float m_minY;
 };
 

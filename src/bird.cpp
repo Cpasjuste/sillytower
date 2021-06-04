@@ -21,16 +21,15 @@ Bird::Bird(Game *game, Texture *texture) : AnimatedSprite(texture, {128, 128}, 4
     float screenHeight = m_game->getSize().y / m_game->getGameView()->getScale().y;
     m_minY = Utility::random(screenHeight * 0.3f, screenHeight * 0.7f);
     // set bird pos
-    Bird::setPosition(x, m_minY);
-    Bird::addPhysicsBody(m_game->getPhysicsWorld(), b2_dynamicBody, 0.2f);
+    Bird::setPosition(x - 200, m_minY);
+    Bird::addPhysicsBody(m_game->getPhysicsWorld(), b2_dynamicBody);
 
     // disable collisions
     b2Filter filter = Bird::getPhysicsBodyFixture()->GetFilterData();
     filter.maskBits = 2;
     Bird::getPhysicsBodyFixture()->SetFilterData(filter);
 
-    getPhysicsBody()->ApplyForce({600, 50}, getPhysicsBody()->GetWorldCenter(), true);
-    m_clock.restart();
+    getPhysicsBody()->ApplyForce({400, 500}, getPhysicsBody()->GetWorldCenter(), true);
 }
 
 void Bird::onUpdate() {
@@ -69,13 +68,12 @@ void Bird::onUpdate() {
         return;
     }
 
-    if (m_clock.getElapsedTime().asSeconds() > 0.5f) {
-        getPhysicsBody()->ApplyForce({600, 0}, getPhysicsBody()->GetWorldCenter(), true);
-        m_clock.restart();
+    if (getPhysicsBody()->GetLinearVelocity().x < 20) {
+        getPhysicsBody()->ApplyForceToCenter({50, 0}, true);
     }
 
     if (getPosition().y < m_minY) {
-        getPhysicsBody()->ApplyForce({0, 50}, getPhysicsBody()->GetWorldCenter(), true);
+        getPhysicsBody()->ApplyForceToCenter({0, 500}, true);
     }
 
     AnimatedSprite::onUpdate();

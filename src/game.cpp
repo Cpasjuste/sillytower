@@ -242,9 +242,9 @@ bool Game::onInput(Input::Player *players) {
             start();
         } else {
             if (keys & Input::Key::Left) {
-                cube->getPhysicsBody()->ApplyForce({-600, 0}, cube->getPhysicsBody()->GetWorldCenter(), true);
+                cube->getPhysicsBody()->ApplyForceToCenter({-600, 0}, true);
             } else if (keys & Input::Key::Right) {
-                cube->getPhysicsBody()->ApplyForce({600, 0}, cube->getPhysicsBody()->GetWorldCenter(), true);
+                cube->getPhysicsBody()->ApplyForceToCenter({600, 0}, true);
             }
         }
     }
@@ -253,6 +253,12 @@ bool Game::onInput(Input::Player *players) {
         float scaling = gameView->getScale().y - (0.5f * gameView->getScale().y);
         cameraScaleTween->setFromTo(gameView->getScale(), {scaling, scaling});
         cameraScaleTween->play();
+    }
+    if (keys & Input::Key::Fire1) {
+        if (!bird) {
+            bird = new Bird(this, birdSpriteSheet);
+            world->add(bird);
+        }
     }
 #endif
 
