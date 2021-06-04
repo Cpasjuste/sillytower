@@ -21,7 +21,7 @@
 #define CLOUD_MAX 30
 #define STARS_MAX 100
 #define STATIC_CUBE_MULTIPLIER 20
-#define EXPLODING_CUBE_MULTIPLIER 10
+#define EXPLODING_CUBE_MULTIPLIER 5
 #define BIRD_SPAWN_MULTIPLIER 10
 
 class Game : public C2DRenderer, b2ContactListener {
@@ -78,14 +78,19 @@ public:
 
     void addToScore(int bonus) {
         score += bonus;
+        ui->setScore(score);
     }
 
     long getScore() const {
         return (long) score - 1;
     }
 
-    Texture *getSpriteSheet() {
-        return spriteSheet;
+    Texture *getCloudSpriteSheet() {
+        return cloudSpriteSheet;
+    }
+
+    Texture *getSmokeSpriteSheet() {
+        return smokeSpriteSheet;
     }
 
     RectangleShape *getWarningShape() {
@@ -118,8 +123,9 @@ private:
     MusicPlayer *music;
 
     // sprites
-    Texture *spriteSheet = nullptr;
+    Texture *cloudSpriteSheet = nullptr;
     Texture *birdSpriteSheet;
+    Texture *smokeSpriteSheet;
 
     Bird *bird = nullptr;
     b2Body *floor = nullptr;

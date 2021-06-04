@@ -5,6 +5,7 @@
 #include "game.h"
 #include "background.h"
 #include "cloud.h"
+#include "explosion.h"
 #include "utility.h"
 
 Game::Game(const Vector2f &size) : C2DRenderer(size) {
@@ -18,8 +19,9 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     leaderboard = new YouLead();
 
     // sprites
-    spriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "textures/spritesheet.png");
+    cloudSpriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "textures/spritesheet.png");
     birdSpriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "/textures/bird.png");
+    smokeSpriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "/textures/smoke1.png");
 
     // add physics (box2d) world to a "game view" for "camera" scaling
     gameView = new Rectangle(Game::getSize());
@@ -162,11 +164,15 @@ Cube *Game::spawnCube(float y) {
                 auto *b2 = edge->contact->GetFixtureB()->GetBody();
                 if (b1 != cube->getPhysicsBody() && b1->GetUserData().pointer != 0) {
                     Cube *c = (Cube *) b1->GetUserData().pointer;
+                    Vector2f pos = {c->getPosition().x + c->getSize().x / 2, c->getPosition().y + c->getSize().y / 2};
+                    world->add(new Explosion(smokeSpriteSheet, pos));
                     cubes.erase(std::remove(cubes.begin(), cubes.end(), c), cubes.end());
                     delete (c);
                 }
                 if (b2 != cube->getPhysicsBody() && b2->GetUserData().pointer != 0) {
                     Cube *c = (Cube *) b2->GetUserData().pointer;
+                    Vector2f pos = {c->getPosition().x + c->getSize().x / 2, c->getPosition().y + c->getSize().y / 2};
+                    world->add(new Explosion(smokeSpriteSheet, pos));
                     cubes.erase(std::remove(cubes.begin(), cubes.end(), c), cubes.end());
                     delete (c);
                 }
@@ -267,7 +273,7 @@ bool Game::onInput(Input::Player *players) {
 
 Game::~Game() {
     delete (leaderboard);
-    delete (spriteSheet);
+    delete (cloudSpriteSheet);
     delete (birdSpriteSheet);
     delete (music);
 }

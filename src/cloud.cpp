@@ -9,7 +9,7 @@
 
 Cloud::Cloud(Game *game) : Sprite() {
     m_game = game;
-    setTexture(m_game->getSpriteSheet());
+    setTexture(m_game->getCloudSpriteSheet());
     setTextureRect(st::Utility::getTextureRect(getTexture(), 4, Utility::random(0, 4), 0));
     float scaling = Utility::random(2.0f, 4.0f);
     Cloud::setScale(scaling, scaling);

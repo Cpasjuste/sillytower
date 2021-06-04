@@ -8,7 +8,8 @@
 
 using namespace c2d;
 
-Bird::Bird(Game *game, Texture *texture) : AnimatedSprite(texture, {128, 128}, 4, 8, 1.5f) {
+Bird::Bird(Game *game, Texture *texture)
+        : AnimatedSprite(texture, {128, 128}, 4, 8, 1.5f) {
 
     m_game = game;
 
