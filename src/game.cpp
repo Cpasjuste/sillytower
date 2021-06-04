@@ -94,6 +94,11 @@ void Game::start() {
     cameraScaleTween->setFromTo(gameView->getScale(), {1, 1});
     cameraScaleTween->play();
 
+    if (bird) {
+        delete (bird);
+        bird = nullptr;
+    }
+
     for (auto c : cubes) {
         delete (c);
     }
@@ -192,24 +197,22 @@ Cube *Game::spawnCube(float y) {
     cubes.push_back(c);
     score++;
 
-    if (cube) {
-        if (st::Utility::isMultipleOf(score, staticMultiplier)) {
-            // set cube to static every ~20 cubes
-            staticMultiplier = Utility::random(STATIC_CUBE_MULTIPLIER - 5, STATIC_CUBE_MULTIPLIER + 5);
-            c->setMode(Cube::Mode::Static);
-            c->playTween(Color::GrayLight);
-        } else if (st::Utility::isMultipleOf(score, explodingMultiplier)) {
-            // set cube to "exploding" every ~10 cubes
-            explodingMultiplier = Utility::random(EXPLODING_CUBE_MULTIPLIER - 5, EXPLODING_CUBE_MULTIPLIER + 5);
-            c->setMode(Cube::Mode::Exploding);
-            c->playTween(Color::Red);
-        }
+    if (st::Utility::isMultipleOf(score, staticMultiplier)) {
+        // set cube to static every ~20 cubes
+        staticMultiplier = Utility::random(STATIC_CUBE_MULTIPLIER - 5, STATIC_CUBE_MULTIPLIER + 5);
+        c->setMode(Cube::Mode::Static);
+        c->playTween(Color::GrayLight);
+    } else if (st::Utility::isMultipleOf(score, explodingMultiplier)) {
+        // set cube to "exploding" every ~10 cubes
+        explodingMultiplier = Utility::random(EXPLODING_CUBE_MULTIPLIER - 5, EXPLODING_CUBE_MULTIPLIER + 5);
+        c->setMode(Cube::Mode::Exploding);
+        c->playTween(Color::Red);
+    }
 
-        if (!bird && st::Utility::isMultipleOf(score, birdMultiplier)) {
-            birdMultiplier = Utility::random(BIRD_SPAWN_MULTIPLIER - 5, BIRD_SPAWN_MULTIPLIER + 5);
-            bird = new Bird(this, birdSpriteSheet);
-            world->add(bird);
-        }
+    if (!bird && st::Utility::isMultipleOf(score, birdMultiplier)) {
+        birdMultiplier = Utility::random(BIRD_SPAWN_MULTIPLIER - 5, BIRD_SPAWN_MULTIPLIER + 5);
+        bird = new Bird(this, birdSpriteSheet);
+        world->add(bird);
     }
 
     if (ui) {

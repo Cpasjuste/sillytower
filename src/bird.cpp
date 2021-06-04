@@ -20,7 +20,7 @@ Bird::Bird(Game *game, Texture *texture)
     float x = -((extend / 2) + Bird::getSize().x);
     // position (y)
     float screenHeight = m_game->getSize().y / m_game->getGameView()->getScale().y;
-    m_minY = Utility::random(screenHeight * 0.3f, screenHeight * 0.7f);
+    m_minY = Utility::random(screenHeight * 0.5f, screenHeight * 0.7f);
     // set bird pos
     Bird::setPosition(x - 200, m_minY);
     Bird::addPhysicsBody(m_game->getPhysicsWorld(), b2_dynamicBody);

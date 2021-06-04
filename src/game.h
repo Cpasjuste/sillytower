@@ -21,7 +21,7 @@
 #define CLOUD_MAX 30
 #define STARS_MAX 100
 #define STATIC_CUBE_MULTIPLIER 20
-#define EXPLODING_CUBE_MULTIPLIER 5
+#define EXPLODING_CUBE_MULTIPLIER 10
 #define BIRD_SPAWN_MULTIPLIER 10
 
 class Game : public C2DRenderer, b2ContactListener {
