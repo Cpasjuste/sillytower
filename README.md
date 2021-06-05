@@ -12,7 +12,10 @@ SillyTower is a physics based game where you must build the highest possible tow
 
 ### **Compilation**
 ```
-git clone --recursive
+git clone --recursive https://github.com/Cpasjuste/sillytower.git
+cd sillytower
+mkdir cmake-build && cd cmake-build
+
 ```
 
 ### **Credits**
