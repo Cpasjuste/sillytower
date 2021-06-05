@@ -15,9 +15,9 @@ SillyTower is a physics based game where you must build the highest possible tow
 git clone --recursive https://github.com/Cpasjuste/sillytower.git
 cd sillytower
 mkdir cmake-build && cd cmake-build
-
+cmake -DCMAKE_BUILD_TYPE=Release -DPLATFORM_VITA=ON -DOPTION_BOX2D=ON -DYOULEAD_KEY=XXXXXXXX ..
+make -j9 SillyTower.vpk
 ```
-
 ### **Credits**
 - [clouds](https://www.freevector.com/free-cartoon-clouds-vector-19879#) by Ery Prihananto
 - [bird](https://opengameart.org/content/game-character-blue-flappy-bird-sprite-sheets) by bevouliin.com
