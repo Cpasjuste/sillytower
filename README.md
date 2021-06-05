@@ -3,9 +3,9 @@
 SillyTower is a physics based game where you must build the highest possible tower!
 
 ### **Notes**
-- You should be connected to the internet to use online high scores and rival your friends
+- You should be connected to the internet to use online leaderboard and rival your friends
+- Online leaderboard use you vita username (psn), you can change this by writing your username in `ux0:/data/SillyTowerData/username.txt` (6 chars min, 17 chars max)
 - If two cubes hits the ground, it's bad for you!
--
 
 ### **Installation**
 - Install vpk and have fun!

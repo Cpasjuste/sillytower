@@ -11,7 +11,6 @@
 #include <cstring>
 #include <psp2/apputil.h>
 #include <psp2/system_param.h>
-//#include <psp2/vshbridge.h>
 #include <psp2/net/net.h>
 #include <psp2/net/netctl.h>
 #include <psp2/sysmodule.h>
@@ -49,36 +48,36 @@ YouLead::YouLead() {
         return;
     }
 
-    // get username
-    SceAppUtilInitParam init;
-    SceAppUtilBootParam boot;
-    memset(&init, 0, sizeof(SceAppUtilInitParam));
-    memset(&boot, 0, sizeof(SceAppUtilBootParam));
-    if (R_FAILED(sceAppUtilInit(&init, &boot))) {
-        printf("ERROR: sceAppUtilInit failed\n");
-        m_available = false;
-        return;
+    // get username, first by config file if any
+    std::string user;
+    auto *io = c2d_renderer->getIo();
+    char *readBuffer = nullptr;
+    size_t readSize = io->read(io->getDataPath() + "SillyTowerData/username.txt", &readBuffer);
+    if (readBuffer && readSize > 5) {
+        user = c2d::Utility::trim(readBuffer);
+        if (user.size() > 17) {
+            user.resize(17);
+        }
+        free(readBuffer);
     }
-
-    SceChar8 userName[SCE_SYSTEM_PARAM_USERNAME_MAXSIZE];
-    sceAppUtilSystemParamGetString(SCE_SYSTEM_PARAM_ID_USERNAME, userName,
-                                   SCE_SYSTEM_PARAM_USERNAME_MAXSIZE);
-    printf("YouLead: username: %s\n", userName);
-
-#if 0 // TODO: fix _vshSblAimgrGetConsoleId failing
-    // get password
-    char cid[16], id[33];
-    if (R_FAILED(_vshSblAimgrGetConsoleId(cid))) {
-        printf("ERROR: _vshSblAimgrGetConsoleId failed\n");
-        m_available = false;
-        return;
+    // if no username config file found, use vita (PSN?) username
+    if (user.empty()) {
+        SceAppUtilInitParam init;
+        SceAppUtilBootParam boot;
+        memset(&init, 0, sizeof(SceAppUtilInitParam));
+        memset(&boot, 0, sizeof(SceAppUtilBootParam));
+        if (R_FAILED(sceAppUtilInit(&init, &boot))) {
+            printf("ERROR: sceAppUtilInit failed\n");
+            m_available = false;
+            return;
+        }
+        SceChar8 userName[SCE_SYSTEM_PARAM_USERNAME_MAXSIZE];
+        sceAppUtilSystemParamGetString(SCE_SYSTEM_PARAM_ID_USERNAME, userName,
+                                       SCE_SYSTEM_PARAM_USERNAME_MAXSIZE);
+        user = (char *) userName;
     }
+    printf("YouLead: username: %s\n", user.c_str());
 
-    for (SceInt i = 0; i < 16; i++) {
-        snprintf(&id[2 * i], 33, "%02X", cid[i]);
-    }
-    printf("YouLead: id: %s\n", id);
-#endif
     // get "password"
     SceNetEtherAddr mac;
     char macAddress[0x12];
@@ -93,7 +92,7 @@ YouLead::YouLead() {
     printf("YouLead: password: %s\n", macAddress);
 
     // finally...
-    m_user = {(char *) userName, macAddress};
+    m_user = {user, macAddress};
 #else
     m_user = {"cpasjust", "testpwd"};
 #endif
