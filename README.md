@@ -1,5 +1,7 @@
 # SillyTower
 
+![](https://github.com/Cpasjuste/sillytower/raw/master/data/resources/screen1.jpg)
+
 SillyTower is a physics based game where you must build the highest possible tower!
 
 ### **Notes**
