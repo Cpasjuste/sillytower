@@ -7,7 +7,7 @@ SillyTower is a physics based game where you must build the highest possible tow
 ### **Notes**
 - You should be connected to internet to use online leaderboard and rival your friends
 - Online leaderboard use your vita username (psn), you can change this by writing a file with your username in `ux0:/data/SillyTowerData/username.txt` (6 chars min, 17 chars max)
-- **If two cubes hits the ground, it's bad for you!**
+- **If more than two cubes hits the ground, it's bad for you!**
 
 ### **Installation**
 - Install vpk and have fun!
