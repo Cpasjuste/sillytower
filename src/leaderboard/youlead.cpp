@@ -95,7 +95,7 @@ YouLead::YouLead() {
     // finally...
     m_user = {(char *) userName, macAddress};
 #else
-    m_user = {"cpasjuste", "testpwd"};
+    m_user = {"cpasjust", "testpwd"};
 #endif
 
     curl_global_init(CURL_GLOBAL_ALL);

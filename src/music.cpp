@@ -36,17 +36,12 @@ MusicPlayer::MusicPlayer(Game *game) {
     m_playlist.emplace_back(path + "1037870_-Northstar-.mp3", "-Northstar-", "PredatorMusic");  // LICENCE OK
     m_playlist.emplace_back(path + "952516_Pink-Sand.mp3", "Pink Sand", "EX-LYD"); // LICENCE OK
     m_playlist.emplace_back(path + "1027248_Arcade-Bounce.mp3", "Arcade Bounce", "DuttonsaysHi"); // LICENCE OK
-    m_playlist.emplace_back(path + "1030797_Ugh---Friday-Night-Funkin-.mp3", "Ugh - Friday Night Funkin", "KawaiSprite"); // LICENCE OK
-    m_playlist.emplace_back(path + "1037651_Everhood---Feisty-Flowers.mp3", "Everhood - Feisty Flowers", "cazok"); // LICENCE OK
+    m_playlist.emplace_back(path + "1037651_Everhood---Feisty-Flowers.mp3", "Feisty Flowers", "cazok"); // LICENCE OK
     m_playlist.emplace_back(path + "1031157_Duel-of-the-Poets.mp3", "Duel of the Poets", "dullsworth"); // LICENCE OK
     m_playlist.emplace_back(path + "969284_-Pirate-Fox-.mp3", "-Pirate Fox-", "PredatorMusic"); // LICENCE OK
-    m_playlist.emplace_back(path + "1038025_Everhood---The-Final-Battl.mp3", "Everhood - The Final Battle", "cazok"); // LICENCE OK
+    m_playlist.emplace_back(path + "1038025_Everhood---The-Final-Battl.mp3", "The Final Battle", "cazok"); // LICENCE OK
     m_playlist.emplace_back(path + "1002761_-Slime-Factory-.mp3", "-Slime Factory-", "PredatorMusic"); // LICENCE OK
     //m_playlist.emplace_back(path + "", "", "");
-    // MAYBE
-    //m_playlist.emplace_back(path + "1025767_Star-rail.mp3", "Star rail", "DuttonsaysHi"); // LICENCE OK
-    //m_playlist.emplace_back(path + "1024339_New-Sega-Genesis-music---P.mp3", "Playing Catch-up", "JoeyFreezeMusic"); // LICENCE OK
-    // TO VERIFY
 
     m_available = true;
 }

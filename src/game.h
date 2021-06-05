@@ -78,7 +78,7 @@ public:
 
     void addToScore(int bonus) {
         score += bonus;
-        ui->setScore(score);
+        ui->setScore(score - 1);
     }
 
     long getScore() const {
