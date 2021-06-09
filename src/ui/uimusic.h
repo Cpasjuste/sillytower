@@ -12,8 +12,6 @@ class UiMusic : public RectangleShape {
 public:
     explicit UiMusic(const FloatRect &rect, const Color &color, const Color &outlineColor, Font *font);
 
-    ~UiMusic() override;
-
     void show(const std::string &name, const std::string &author);
 
 private:
@@ -21,7 +19,7 @@ private:
 
     Text *musicText;
     Text *infoText;
-    Clock *timer;
+    C2DClock timer;
 };
 
 #endif //SILLYTOWER_UIMUSIC_H
