@@ -38,24 +38,27 @@ file(GLOB STOWE_SRC src/*.c* src/ui/*.c* src/leaderboard/*.c*)
 set(STOWE_CFLAGS
         -D__YOULEAD_KEY__="${YOULEAD_KEY}"
         -D__VERSION_MAJOR__=${VERSION_MAJOR}
-        -D__VERSION_MINOR__=${VERSION_MINOR}
-        )
+        -D__VERSION_MINOR__=${VERSION_MINOR})
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(CURL REQUIRED)
-#find_package(OpenSSL REQUIRED)
-set(STOWE_LDFLAGS ${CURL_LIBRARIES} ${OPENSSL_LIBRARIES})
+if (NOT PLATFORM_SWITCH)
+    find_package(OpenSSL REQUIRED)
+endif ()
+find_package(SDL2_mixer REQUIRED)
+set(STOWE_LDFLAGS ${SDL2_MIXER_LIBRARIES} ${CURL_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 #####################
 # PLATORM SPECIFIC
 #####################
 if (PLATFORM_SWITCH)
+    list(APPEND STOWE_LDFLAGS
+            vorbisfile vorbis ogg opusfile opus modplug mpg123
+            mbedtls mbedcrypto mbedx509)
 elseif (PLATFORM_VITA)
     list(APPEND STOWE_LDFLAGS
             vorbisfile vorbis ogg mikmod FLAC mpg123
-            ScePower_stub SceAppUtil_stub
-            SceNet_stub SceNetCtl_stub
-            #SceVshBridge_stub
-            -Wl,-q)
+            SceNet_stub SceNetCtl_stub)
 elseif (PLATFORM_LINUX)
 endif ()
 
@@ -66,7 +69,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${STOWE_SRC} src/music.cpp src/music.h)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${STOWE_INC})
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE ${STOWE_CFLAGS})
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
-target_link_libraries(${CMAKE_PROJECT_NAME} cross2d ssl crypto ${STOWE_LDFLAGS} SDL2_mixer)
+target_link_libraries(${CMAKE_PROJECT_NAME} cross2d ${STOWE_LDFLAGS})
 
 #####################
 # targets

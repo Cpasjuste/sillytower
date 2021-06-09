@@ -2,7 +2,13 @@
 // Created by cpasjuste on 21/05/2021.
 //
 
+#ifdef __SWITCH__
+#include <mbedtls/md5.h>
+#define MD5_DIGEST_LENGTH 16
+#define MD5 mbedtls_md5
+#else
 #include <openssl/md5.h>
+#endif
 #include "youlead.h"
 #include "utility.h"
 
