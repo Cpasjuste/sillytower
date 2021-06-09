@@ -30,7 +30,7 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
 
     gameOverText = new Text("... GAME OVER ...", C2D_DEFAULT_CHAR_SIZE, font);
     gameOverText->setOrigin(Origin::Center);
-    gameOverText->setPosition(Ui::getSize().x / 2, 32);
+    gameOverText->setPosition(Ui::getSize().x / 2, 32 * m_game->getScaling().y);
     gameOverText->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
     gameOverText->add(new TweenColor(gameOverText->getFillColor(), Color::Yellow, 1, TweenLoop::PingPong));
     gameOverText->setVisibility(Visibility::Hidden);
@@ -44,11 +44,13 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     Ui::add(topPlayers);
 
     splashKyuhenTex = new C2DTexture(m_game->getIo()->getRomFsPath() + "textures/splashscreen-kyuhen.png");
+    splashKyuhenTex->setScale(m_game->getScaling());
     splashKyuhenTex->add(new TweenAlpha(0, 255, 3));
     splashKyuhenTex->setVisibility(Visibility::Hidden);
     Ui::add(splashKyuhenTex);
 
     splashCpasTex = new C2DTexture(m_game->getIo()->getRomFsPath() + "textures/splashscreen-cpasjuste.png");
+    splashCpasTex->setScale(m_game->getScaling());
     splashCpasTex->setOrigin(Origin::Center);
     splashCpasTex->setPosition(Ui::getSize().x / 2, Ui::getSize().y / 2);
     splashCpasTex->add(new TweenAlpha(0, 255, 3));
@@ -63,8 +65,8 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     Ui::add(title);
 
     pressStartText = new Text("PRESS START", C2D_DEFAULT_CHAR_SIZE, font);
-    pressStartText->setOrigin(Origin::Bottom);
-    pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - 128);
+    pressStartText->setOrigin(Origin::Center);
+    pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - (128 * m_game->getScaling().y));
     pressStartText->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
     pressStartText->add(new TweenAlpha(0, 255, 2, TweenLoop::PingPong));
     pressStartText->setVisibility(Visibility::Hidden);
@@ -99,7 +101,7 @@ void Ui::showGameOver() {
     topPlayers->setVisibility(Visibility::Visible, true);
     pressStartText->setVisibility(Visibility::Visible, true);
     scoreText->setVisibility(Visibility::Hidden, true);
-    pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - 64);
+    pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - (64 * m_game->getScaling().y));
     m_game->getInput()->setRepeatDelay(10000);
     // scores
     Score myScore = m_game->getLeaderboard()->addScore(m_game->getScore());

@@ -12,6 +12,9 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
     //Game::setPrintStats(true);
 
+    // game based on vita resolution...
+    m_scaling = {size.x / 960, size.y / 544};
+
     // for local score
     Game::getIo()->create(Game::getIo()->getDataPath() + "SillyTowerData");
 

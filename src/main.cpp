@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     scePowerSetGpuXbarClockFrequency(166);
 #endif
 
-    auto *game = new Game({960, 544});
+    auto *game = new Game({C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT});
 
     while (true) {
 

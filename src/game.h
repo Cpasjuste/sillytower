@@ -109,11 +109,17 @@ public:
         return colors[Utility::random(0, 4)];
     }
 
+    Vector2f getScaling() const {
+        return m_scaling;
+    }
+
 private:
 
     void onUpdate() override;
 
     bool onInput(Input::Player *players) override;
+
+    Vector2f m_scaling = {1, 1};
 
     //
     Ui *ui;
