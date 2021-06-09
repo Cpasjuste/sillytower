@@ -2,7 +2,10 @@
 // Created by cpasjuste on 08/12/16.
 //
 
-#include "main.h"
+#include "cross2d/c2d.h"
+#include "game.h"
+
+using namespace c2d;
 
 #ifdef __PSP2__
 
