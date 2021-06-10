@@ -16,8 +16,7 @@
 
 #define CUBE_MIN_WIDTH 100
 #define CUBE_MAX_WIDTH 300
-#define CUBE_MIN_HEIGHT 100
-#define CUBE_MAX_HEIGHT 100
+#define CUBE_HEIGHT 100
 #define CLOUD_MAX 30
 #define STARS_MAX 100
 #define STATIC_CUBE_MULTIPLIER 20
@@ -52,6 +51,18 @@ public:
 
     void setCube(Cube *c) {
         cube = c;
+    }
+
+    int getCubeMinWidth() {
+        return (int) ((float) CUBE_MIN_WIDTH * m_scaling.x);
+    }
+
+    int getCubeMaxWidth() {
+        return (int) ((float) CUBE_MAX_WIDTH * m_scaling.x);
+    }
+
+    int getCubeHeight() {
+        return (int) ((float) CUBE_HEIGHT * m_scaling.y);
     }
 
     void BeginContact(b2Contact *contact) override;

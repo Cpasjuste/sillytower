@@ -42,10 +42,13 @@ set(STOWE_CFLAGS
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(CURL REQUIRED)
-if (NOT PLATFORM_SWITCH)
+if (NOT PLATFORM_SWITCH AND NOT PLATFORM_3DS)
     find_package(OpenSSL REQUIRED)
 endif ()
-find_package(SDL2_mixer REQUIRED)
+if (NOT PLATFORM_3DS)
+    find_package(SDL2_mixer REQUIRED)
+    list(APPEND STOWE_CFLAGS -D__WITH_SDL2_MIXER__)
+endif ()
 set(STOWE_LDFLAGS ${SDL2_MIXER_LIBRARIES} ${CURL_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 #####################
@@ -54,6 +57,9 @@ set(STOWE_LDFLAGS ${SDL2_MIXER_LIBRARIES} ${CURL_LIBRARIES} ${OPENSSL_LIBRARIES}
 if (PLATFORM_SWITCH)
     list(APPEND STOWE_LDFLAGS
             vorbisfile vorbis ogg opusfile opus modplug mpg123
+            mbedtls mbedcrypto mbedx509)
+elseif (PLATFORM_3DS)
+    list(APPEND STOWE_LDFLAGS
             mbedtls mbedcrypto mbedx509)
 elseif (PLATFORM_VITA)
     list(APPEND STOWE_LDFLAGS

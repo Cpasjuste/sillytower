@@ -13,9 +13,11 @@ UiTopPlayers::UiTopPlayers(Game *game, Ui *ui, const FloatRect &rect) : Rectangl
     //UiTopPlayers::setCornersRadius(5);
     //UiTopPlayers::setCornerPointCount(8);
 
-    Text *title = new Text("TOP SCORES", C2D_DEFAULT_CHAR_SIZE, ui->getFont());
+    Vector2f scale = game->getScaling();
+
+    Text *title = new Text("TOP SCORES", UI_FONT_SIZE, ui->getFont());
     title->setOrigin(Origin::BottomRight);
-    title->setPosition(rect.width - 8, 1);
+    title->setPosition(rect.width - (8 * scale.x), 1);
     UiTopPlayers::add(title);
 
     // scores items
@@ -28,9 +30,9 @@ UiTopPlayers::UiTopPlayers(Game *game, Ui *ui, const FloatRect &rect) : Rectangl
     m_myScore->setOutlineThickness(2);
     m_myScore->rank->setVisibility(Visibility::Visible);
     m_myScore->cupSprite->setVisibility(Visibility::Hidden);
-    Text *myScoreTitle = new Text("MY BEST SCORE", C2D_DEFAULT_CHAR_SIZE, ui->getFont());
+    Text *myScoreTitle = new Text("MY BEST SCORE", UI_FONT_SIZE, ui->getFont());
     myScoreTitle->setOrigin(Origin::BottomRight);
-    myScoreTitle->setPosition(m_myScore->getSize().x - 8, 1);
+    myScoreTitle->setPosition(m_myScore->getSize().x - (8 * scale.x), 1);
     m_myScore->add(myScoreTitle);
     UiTopPlayers::add(m_myScore);
     // top scores item
@@ -76,24 +78,27 @@ UiTopPlayers::ScoreItem::ScoreItem(Ui *ui, const FloatRect &rect, Texture *cupTe
     //UiTopPlayers::ScoreItem::setCornersRadius(5);
     //UiTopPlayers::ScoreItem::setCornerPointCount(8);
 
+    Vector2f scale = ui->getGame()->getScaling();
+
     cupSprite = new Sprite(cupTex);
-    cupSprite->setPosition(8, 8);
+    cupSprite->setScale(scale);
+    cupSprite->setPosition(8 * scale.x, 8 * scale.y);
     cupSprite->setFillColor(cupColor);
     UiTopPlayers::ScoreItem::add(cupSprite);
 
-    rank = new Text("??", 18, ui->getFont());
+    rank = new Text("??", UI_FONT_SIZE, ui->getFont());
     rank->setOrigin(Origin::Center);
-    rank->setPosition(8 + (cupSprite->getSize().x / 2), rect.height / 2);
+    rank->setPosition((8 + (cupSprite->getSize().x / 2)) * scale.x, rect.height / 2);
     rank->setVisibility(Visibility::Hidden);
     UiTopPlayers::ScoreItem::add(rank);
 
-    name = new Text("NO CONNEXION !", C2D_DEFAULT_CHAR_SIZE, ui->getFont());
+    name = new Text("NO CONNEXION !", UI_FONT_SIZE, ui->getFont());
     name->setOrigin(Origin::Left);
-    name->setPosition(64, rect.height / 2);
+    name->setPosition(64 * scale.x, rect.height / 2);
     UiTopPlayers::ScoreItem::add(name);
 
-    score = new Text("??", C2D_DEFAULT_CHAR_SIZE, ui->getFont());
+    score = new Text("??", UI_FONT_SIZE, ui->getFont());
     score->setOrigin(Origin::Right);
-    score->setPosition(rect.width - 8, rect.height / 2);
+    score->setPosition(rect.width - (8 * scale.x), rect.height / 2);
     UiTopPlayers::ScoreItem::add(score);
 }

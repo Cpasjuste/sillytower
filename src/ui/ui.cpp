@@ -10,10 +10,11 @@
 Ui::Ui(Game *game) : Rectangle(game->getSize()) {
 
     m_game = game;
+    Vector2f scale = m_game->getScaling();
 
     font = new BMFont();
     font->loadFromFile(m_game->getIo()->getRomFsPath() + "textures/04b_19.fnt");
-    font->setOffset({0, -2});
+    font->setOffset({0, -(2 * scale.y)});
 
     fade = new RectangleShape(Ui::getSize());
     fade->setFillColor(Color::GrayLight);
@@ -22,21 +23,21 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     fade->add(fadeTween);
     Ui::add(fade);
 
-    scoreText = new Text("SCORE: 0", C2D_DEFAULT_CHAR_SIZE, font);
-    scoreText->setPosition(4, 4);
+    scoreText = new Text("SCORE: 0", UI_FONT_SIZE, font);
+    scoreText->setPosition(4 * scale.x, 4 * scale.y);
     scoreText->setVisibility(Visibility::Hidden);
     scoreText->add(new TweenAlpha(0, 255, 3));
     Ui::add(scoreText);
 
-    gameOverText = new Text("... GAME OVER ...", C2D_DEFAULT_CHAR_SIZE, font);
+    gameOverText = new Text("... GAME OVER ...", UI_FONT_SIZE, font);
     gameOverText->setOrigin(Origin::Center);
-    gameOverText->setPosition(Ui::getSize().x / 2, 32 * m_game->getScaling().y);
+    gameOverText->setPosition(Ui::getSize().x / 2, 32 * scale.y);
     gameOverText->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
     gameOverText->add(new TweenColor(gameOverText->getFillColor(), Color::Yellow, 1, TweenLoop::PingPong));
     gameOverText->setVisibility(Visibility::Hidden);
     Ui::add(gameOverText);
 
-    topPlayers = new UiTopPlayers(m_game, this, {0, 0, 400, 64 * 3});
+    topPlayers = new UiTopPlayers(m_game, this, {0, 0, 400 * scale.x, (64 * scale.y) * 3});
     topPlayers->setOrigin(Origin::Center);
     topPlayers->setPosition(Ui::getSize().x / 2, Ui::getSize().y / 1.70f);
     topPlayers->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
@@ -44,13 +45,13 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     Ui::add(topPlayers);
 
     splashKyuhenTex = new C2DTexture(m_game->getIo()->getRomFsPath() + "textures/splashscreen-kyuhen.png");
-    splashKyuhenTex->setScale(m_game->getScaling());
+    splashKyuhenTex->setScale(scale);
     splashKyuhenTex->add(new TweenAlpha(0, 255, 3));
     splashKyuhenTex->setVisibility(Visibility::Hidden);
     Ui::add(splashKyuhenTex);
 
     splashCpasTex = new C2DTexture(m_game->getIo()->getRomFsPath() + "textures/splashscreen-cpasjuste.png");
-    splashCpasTex->setScale(m_game->getScaling());
+    splashCpasTex->setScale(scale);
     splashCpasTex->setOrigin(Origin::Center);
     splashCpasTex->setPosition(Ui::getSize().x / 2, Ui::getSize().y / 2);
     splashCpasTex->add(new TweenAlpha(0, 255, 3));
@@ -58,21 +59,22 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     Ui::add(splashCpasTex);
 
     title = new C2DTexture(m_game->getIo()->getRomFsPath() + "textures/title.png");
+    title->setScale(scale);
     title->setOrigin(Origin::Center);
-    title->setPosition(Ui::getSize().x / 2, (Ui::getSize().y / 2) - 64);
+    title->setPosition(Ui::getSize().x / 2, (Ui::getSize().y / 2) - (64 * scale.y));
     title->add(new TweenAlpha(0, 255, 3));
     title->setVisibility(Visibility::Hidden);
     Ui::add(title);
 
-    pressStartText = new Text("PRESS START", C2D_DEFAULT_CHAR_SIZE, font);
+    pressStartText = new Text("PRESS START", UI_FONT_SIZE, font);
     pressStartText->setOrigin(Origin::Center);
-    pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - (128 * m_game->getScaling().y));
+    pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - (128 * scale.y));
     pressStartText->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
     pressStartText->add(new TweenAlpha(0, 255, 2, TweenLoop::PingPong));
     pressStartText->setVisibility(Visibility::Hidden);
     Ui::add(pressStartText);
 
-    bonusText = new Text("+10", C2D_DEFAULT_CHAR_SIZE, font);
+    bonusText = new Text("+10", UI_FONT_SIZE, font);
     bonusText->setOrigin(Origin::Center);
     bonusText->add(new TweenScale({0, 0}, {1, 1}, 0.25f));
     bonusText->setVisibility(Visibility::Hidden, false);

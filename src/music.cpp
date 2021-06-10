@@ -17,6 +17,7 @@ MusicPlayer::MusicPlayer(Game *game) {
     musicInstance = this;
     m_game = game;
 
+#ifdef __WITH_SDL2_MIXER__
     if (!SDL_WasInit(SDL_INIT_AUDIO)) {
         if (SDL_Init(SDL_INIT_AUDIO) != 0) {
             printf("Music::Music: %s", SDL_GetError());
@@ -44,6 +45,7 @@ MusicPlayer::MusicPlayer(Game *game) {
     //m_playlist.emplace_back(path + "", "", "");
 
     m_available = true;
+#endif
 }
 
 bool MusicPlayer::playNext() {
@@ -72,6 +74,7 @@ bool MusicPlayer::play(size_t pos) {
         return false;
     }
 
+#ifdef __WITH_SDL2_MIXER__
     if (m_music) {
         Mix_FreeMusic(m_music);
         m_music = nullptr;
@@ -98,27 +101,33 @@ bool MusicPlayer::play(size_t pos) {
     m_game->getUi()->showMusicPlayer(m_playlist.at(pos).m_name, m_playlist.at(pos).m_author);
 
     return true;
+#endif
 }
 
 void MusicPlayer::pause() {
     if (!m_available) {
         return;
     }
+#ifdef __WITH_SDL2_MIXER__
     if (m_music) {
         Mix_PauseMusic();
     }
+#endif
 }
 
 void MusicPlayer::resume() {
     if (!m_available) {
         return;
     }
+#ifdef __WITH_SDL2_MIXER__
     if (m_music) {
         Mix_ResumeMusic();
     }
+#endif
 }
 
 MusicPlayer::~MusicPlayer() {
+#ifdef __WITH_SDL2_MIXER__
     Mix_HookMusicFinished(nullptr);
     if (m_music) {
         Mix_FreeMusic(m_music);
@@ -127,5 +136,5 @@ MusicPlayer::~MusicPlayer() {
     if (SDL_WasInit(SDL_INIT_AUDIO)) {
         SDL_QuitSubSystem(SDL_INIT_AUDIO);
     }
+#endif
 }
-

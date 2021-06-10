@@ -5,8 +5,11 @@
 #ifndef SILLYTOWER_MUSIC_H
 #define SILLYTOWER_MUSIC_H
 
+#ifdef __WITH_SDL2_MIXER__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+#endif
+
 #include <string>
 
 class MusicPlayer {
@@ -42,10 +45,12 @@ public:
 private:
 
     Game *m_game;
-    Mix_Music *m_music = nullptr;
     std::vector<PlaylistItem> m_playlist;
     int m_playlistPos = 0;
     bool m_available = false;
+#ifdef __WITH_SDL2_MIXER__
+    Mix_Music *m_music = nullptr;
+#endif
 };
 
 #endif //SILLYTOWER_MUSIC_H

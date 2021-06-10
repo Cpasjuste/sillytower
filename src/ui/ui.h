@@ -5,6 +5,12 @@
 #ifndef SILLYTOWER_UI_H
 #define SILLYTOWER_UI_H
 
+#ifdef __3DS__
+#define UI_FONT_SIZE 14
+#else
+#define UI_FONT_SIZE C2D_DEFAULT_CHAR_SIZE
+#endif
+
 using namespace c2d;
 
 class Game;
@@ -31,6 +37,10 @@ public:
     void showBonusText(const Vector2f &pos, const std::string &text);
 
     void showMusicPlayer(const std::string &name, const std::string &author);
+
+    Game *getGame() {
+        return m_game;
+    }
 
     BMFont *getFont() {
         return font;

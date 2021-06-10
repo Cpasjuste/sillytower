@@ -35,7 +35,7 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
     // background
     auto bg = new Background({Game::getSize().x / 2, Game::getSize().y,
-                              Game::getSize().x * 20, Game::getSize().y * 10});
+                              Game::getSize().x * (20 * m_scaling.x), Game::getSize().y * (10 * m_scaling.y)});
     bg->setOrigin(Origin::Bottom);
     gameView->add(bg);
 
@@ -63,13 +63,13 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     }
 
     // create physics world and add it to the game view
-    world = new PhysicsWorld({0, -5});
+    world = new PhysicsWorld({0, -(5.0f * m_scaling.y)});
     world->getPhysics()->SetContactListener(this);
     gameView->add(world);
 
     // floor body
-    auto floorRect = new RectangleShape({-(Game::getSize().x * 10) + (Game::getSize().x / 2), 0,
-                                         Game::getSize().x * 20, 32});
+    auto floorRect = new RectangleShape({-(Game::getSize().x * (10 * m_scaling.x)) + (Game::getSize().x / 2), 0,
+                                         Game::getSize().x * (20 * m_scaling.x), 32 * m_scaling.y});
     floorRect->setOutlineColor(Color::Black);
     floorRect->setOutlineThickness(2);
     floorRect->setFillColor(Color::GrayLight);
@@ -154,7 +154,7 @@ Cube *Game::spawnCube(float y) {
     if (cube) {
         // "camera" zoom effect
         float screenTop = getSize().y / gameView->getScale().y;
-        float maxHeight = screenTop - (5 * CUBE_MAX_HEIGHT);
+        float maxHeight = screenTop - (float) (5 * getCubeHeight());
         if (cube->getPosition().y > maxHeight) {
             float scaling = gameView->getScale().y - (0.1f * gameView->getScale().y);
             cameraScaleTween->setFromTo(gameView->getScale(), {scaling, scaling});
@@ -189,9 +189,10 @@ Cube *Game::spawnCube(float y) {
         }
     }
 
-    float x = Utility::random((Game::getSize().x / 2) - 100, (Game::getSize().x / 2) + 100);
-    int w = Utility::random(CUBE_MIN_WIDTH, CUBE_MAX_WIDTH);
-    int h = Utility::random(CUBE_MIN_HEIGHT, CUBE_MAX_HEIGHT);
+    float x = Utility::random((Game::getSize().x / 2) - (100 * m_scaling.x),
+                              (Game::getSize().x / 2) + (100 * m_scaling.x));
+    int w = Utility::random(getCubeMinWidth(), getCubeMaxWidth());
+    int h = getCubeHeight();
     FloatRect rect = {(float) x - ((float) w / 2), y > 0 ? y : getSize().y / gameView->getScale().y,
                       (float) w, (float) h};
     auto c = new Cube(this, rect);
@@ -254,9 +255,9 @@ bool Game::onInput(Input::Player *players) {
             start();
         } else {
             if (keys & Input::Key::Left) {
-                cube->getPhysicsBody()->ApplyForceToCenter({-600, 0}, true);
+                cube->getPhysicsBody()->ApplyForceToCenter({-(600 * m_scaling.x), 0}, true);
             } else if (keys & Input::Key::Right) {
-                cube->getPhysicsBody()->ApplyForceToCenter({600, 0}, true);
+                cube->getPhysicsBody()->ApplyForceToCenter({600 * m_scaling.x, 0}, true);
             }
         }
     }
