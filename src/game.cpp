@@ -23,8 +23,8 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
 
     // sprites
     cloudSpriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "textures/spritesheet.png");
-    birdSpriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "/textures/bird.png");
-    smokeSpriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "/textures/smoke1.png");
+    birdSpriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "textures/bird.png");
+    smokeSpriteSheet = new C2DTexture(Game::getIo()->getRomFsPath() + "textures/smoke1.png");
 
     // add physics (box2d) world to a "game view" for "camera" scaling
     gameView = new Rectangle(Game::getSize());
