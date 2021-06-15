@@ -33,11 +33,9 @@ void Cube::onUpdate() {
         m_game->getWarningShape()->setVisibility(Visibility::Visible, true);
         warningClock.restart();
         warned = true;
-    } else if (warned && !warnedDone && warningClock.getElapsedTime().asSeconds() > 2) {
-        if (!getPhysicsBody()->IsAwake()) {
-            m_game->getWarningShape()->setVisibility(Visibility::Hidden, true);
-            warnedDone = true;
-        }
+    } else if (warned && !warnedDone && warningClock.getElapsedTime().asSeconds() > 4) {
+        m_game->getWarningShape()->setVisibility(Visibility::Hidden, true);
+        warnedDone = true;
     }
 
     RectangleShape::onUpdate();

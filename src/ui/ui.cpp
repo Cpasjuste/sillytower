@@ -25,14 +25,14 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     Ui::add(fade);
 
     scoreText = new Text("SCORE: 0", UI_FONT_SIZE, font);
-    scoreText->setPosition(4 * scale.x, 4 * scale.y);
+    scoreText->setPosition(float((int) (4.0f * scale.x)), float((int) (4.0f * scale.y)));
     scoreText->setVisibility(Visibility::Hidden);
     scoreText->add(new TweenAlpha(0, 255, 3));
     Ui::add(scoreText);
 
     gameOverText = new Text("... GAME OVER ...", UI_FONT_SIZE, font);
     gameOverText->setOrigin(Origin::Center);
-    gameOverText->setPosition(Ui::getSize().x / 2, 32 * scale.y);
+    gameOverText->setPosition(Ui::getSize().x / 2, float((int) (32.0f * scale.y)));
     gameOverText->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
     gameOverText->add(new TweenColor(gameOverText->getFillColor(), Color::Yellow, 1, TweenLoop::PingPong));
     gameOverText->setVisibility(Visibility::Hidden);
@@ -77,7 +77,7 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     pressStartText = new Text("PRESS (X) TO START", UI_FONT_SIZE, font);
 #endif
     pressStartText->setOrigin(Origin::Center);
-    pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - (128 * scale.y));
+    pressStartText->setPosition(float((int) (Ui::getSize().x / 2)), float((int) (Ui::getSize().y - (128 * scale.y))));
     pressStartText->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
     pressStartText->add(new TweenAlpha(0, 255, 2, TweenLoop::PingPong));
     pressStartText->setVisibility(Visibility::Hidden);
@@ -112,7 +112,8 @@ void Ui::showGameOver() {
     topPlayers->setVisibility(Visibility::Visible, true);
     pressStartText->setVisibility(Visibility::Visible, true);
     scoreText->setVisibility(Visibility::Hidden, true);
-    pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - (64 * m_game->getScaling().y));
+    pressStartText->setPosition(float((int) (Ui::getSize().x / 2)),
+                                float((int) (Ui::getSize().y - (64 * m_game->getScaling().y))));
     m_game->getInput()->setRepeatDelay(10000);
     // scores
     Score myScore = m_game->getLeaderboard()->addScore(m_game->getScore());
