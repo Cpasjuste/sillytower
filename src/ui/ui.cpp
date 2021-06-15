@@ -66,7 +66,11 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     title->setVisibility(Visibility::Hidden);
     Ui::add(title);
 
-    pressStartText = new Text("PRESS START", UI_FONT_SIZE, font);
+#ifdef __SWITCH__
+    pressStartText = new Text("PRESS (A) TO START", UI_FONT_SIZE, font);
+#else
+    pressStartText = new Text("PRESS START (X) TO START", UI_FONT_SIZE, font);
+#endif
     pressStartText->setOrigin(Origin::Center);
     pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - (128 * scale.y));
     pressStartText->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
@@ -174,7 +178,7 @@ bool Ui::onInput(Input::Player *players) {
             }
             buttonPressCount++;
         }
-    } else if (players[0].keys & Input::Key::Start && title->isVisible()) {
+    } else if (players[0].keys & Input::Key::Fire1 && title->isVisible()) {
         title->setVisibility(Visibility::Hidden, true);
         pressStartText->setVisibility(Visibility::Hidden, false);
         scoreText->setVisibility(Visibility::Visible, true);
