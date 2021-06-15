@@ -92,16 +92,23 @@ Game::Game(const Vector2f &size) : C2DRenderer(size) {
     ui->start();
 }
 
-void Game::start() {
+void Game::pause() {
+    world->setPaused(true);
+    paused = true;
+}
 
+void Game::resume() {
+    world->setPaused(false);
+    paused = false;
+}
+
+void Game::restart() {
     cameraScaleTween->setFromTo(gameView->getScale(), {1, 1});
     cameraScaleTween->play();
-
     if (bird) {
         delete (bird);
         bird = nullptr;
     }
-
     for (auto c : cubes) {
         delete (c);
     }
@@ -112,8 +119,10 @@ void Game::start() {
     cube = spawnCube(getSize().y);
     firstCube = cube->getPhysicsBody();
 
-    world->setPaused(false);
+    warningShape->setVisibility(Visibility::Hidden, true);
     ui->hideGameOver();
+    ui->resume();
+    ended = false;
 }
 
 void Game::BeginContact(b2Contact *contact) {
@@ -135,7 +144,8 @@ void Game::BeginContact(b2Contact *contact) {
             if (!secondCube) {
                 secondCube = body1 == floor ? body2 : body1;
             } else {
-                world->setPaused(true);
+                pause();
+                ended = true;
                 ui->showGameOver();
             }
         }
@@ -250,17 +260,14 @@ void Game::onUpdate() {
 bool Game::onInput(Input::Player *players) {
 
     unsigned int keys = players[0].keys;
-    if (cube) {
-        if (keys & Input::Key::Start && world->isPaused()) {
-            start();
-        } else {
-            if (keys & Input::Key::Left) {
-                cube->getPhysicsBody()->ApplyForceToCenter({-(600 * m_scaling.x), 0}, true);
-            } else if (keys & Input::Key::Right) {
-                cube->getPhysicsBody()->ApplyForceToCenter({600 * m_scaling.x, 0}, true);
-            }
+    if (cube && !paused && !ended) {
+        if (keys & Input::Key::Left) {
+            cube->getPhysicsBody()->ApplyForceToCenter({-(600 * m_scaling.x), 0}, true);
+        } else if (keys & Input::Key::Right) {
+            cube->getPhysicsBody()->ApplyForceToCenter({600 * m_scaling.x, 0}, true);
         }
     }
+
 #ifndef NDEBUG
     if (keys & Input::Key::Up) {
         float scaling = gameView->getScale().y - (0.5f * gameView->getScale().y);
@@ -284,4 +291,5 @@ Game::~Game() {
     delete (birdSpriteSheet);
     delete (music);
 }
+
 

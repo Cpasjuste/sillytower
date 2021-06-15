@@ -25,14 +25,11 @@ int main(int argc, char *argv[]) {
 #endif
 
     auto *game = new Game({C2D_SCREEN_WIDTH, C2D_SCREEN_HEIGHT});
-
-    while (true) {
-
+    while (!game->shouldQuit()) {
         unsigned int keys = game->getInput()->getKeys();
         if (keys & EV_QUIT) {
             break;
         }
-
         game->flip();
     }
 

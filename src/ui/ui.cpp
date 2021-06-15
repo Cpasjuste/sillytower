@@ -5,6 +5,7 @@
 #include "game.h"
 #include "ui.h"
 #include "uitopplayers.h"
+#include "uipausemenu.h"
 #include "uimusic.h"
 
 Ui::Ui(Game *game) : Rectangle(game->getSize()) {
@@ -19,7 +20,7 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     fade = new RectangleShape(Ui::getSize());
     fade->setFillColor(Color::GrayLight);
     fade->setAlpha(0);
-    fadeTween = new TweenAlpha(0, 230, 1);
+    fadeTween = new TweenAlpha(0, 230, 0.5f);
     fade->add(fadeTween);
     Ui::add(fade);
 
@@ -43,6 +44,10 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
     topPlayers->add(new TweenScale({0, 0}, {1, 1}, 0.5f));
     topPlayers->setVisibility(Visibility::Hidden);
     Ui::add(topPlayers);
+
+    pauseMenu = new UiPauseMenu(this);
+    pauseMenu->setVisibility(Visibility::Hidden);
+    add(pauseMenu);
 
     splashKyuhenTex = new C2DTexture(m_game->getIo()->getRomFsPath() + "textures/splashscreen-kyuhen.png");
     splashKyuhenTex->setScale(scale);
@@ -69,7 +74,7 @@ Ui::Ui(Game *game) : Rectangle(game->getSize()) {
 #ifdef __SWITCH__
     pressStartText = new Text("PRESS (A) TO START", UI_FONT_SIZE, font);
 #else
-    pressStartText = new Text("PRESS START (X) TO START", UI_FONT_SIZE, font);
+    pressStartText = new Text("PRESS (X) TO START", UI_FONT_SIZE, font);
 #endif
     pressStartText->setOrigin(Origin::Center);
     pressStartText->setPosition(Ui::getSize().x / 2, Ui::getSize().y - (128 * scale.y));
@@ -137,6 +142,21 @@ void Ui::showMusicPlayer(const std::string &name, const std::string &author) {
     uiMusic->show(name, author);
 }
 
+void Ui::pause() {
+    fade->setVisibility(Visibility::Visible, true);
+    pauseMenu->setVisibility(Visibility::Visible, true);
+    m_game->pause();
+    m_game->getInput()->setRepeatDelay(10000);
+}
+
+void Ui::resume() {
+    fade->setVisibility(Visibility::Hidden, true);
+    pauseMenu->setVisibility(Visibility::Hidden, true);
+    m_game->resume();
+    m_game->getInput()->setRepeatDelay(0);
+    m_game->getInput()->clear();
+}
+
 void Ui::onUpdate() {
     if (!gameStarted) {
         float elapsed = splashClock.getElapsedTime().asSeconds();
@@ -165,8 +185,9 @@ void Ui::onUpdate() {
 }
 
 bool Ui::onInput(Input::Player *players) {
+    unsigned int keys = players[0].keys;
     if (!gameStarted) {
-        if (players[0].keys & Input::Key::Start) {
+        if (keys & Input::Key::Start) {
             if (buttonPressCount > 0) {
                 m_game->getMusic()->play(0);
                 splashKyuhenTex->setVisibility(Visibility::Hidden, false);
@@ -178,21 +199,29 @@ bool Ui::onInput(Input::Player *players) {
             }
             buttonPressCount++;
         }
-    } else if (players[0].keys & Input::Key::Fire1 && title->isVisible()) {
-        title->setVisibility(Visibility::Hidden, true);
-        pressStartText->setVisibility(Visibility::Hidden, false);
-        scoreText->setVisibility(Visibility::Visible, true);
-        m_game->start();
-        m_game->getInput()->setRepeatDelay(0);
-    } else if (players[0].keys & Input::Key::Fire5) {
-        m_game->getMusic()->playPrev();
-        if (!title->isVisible()) {
-            m_game->delay(150);
-        }
-    } else if (players[0].keys & Input::Key::Fire6) {
-        m_game->getMusic()->playNext();
-        if (!title->isVisible()) {
-            m_game->delay(150);
+    } else {
+        if (keys & Input::Key::Fire1 && (title->isVisible() || m_game->isEnded())) {
+            title->setVisibility(Visibility::Hidden, true);
+            pressStartText->setVisibility(Visibility::Hidden, false);
+            scoreText->setVisibility(Visibility::Visible, true);
+            m_game->restart();
+            m_game->getInput()->setRepeatDelay(0);
+        } else if (keys & Input::Key::Fire5) {
+            m_game->getMusic()->playPrev();
+            if (!title->isVisible()) {
+                m_game->delay(150);
+            }
+        } else if (keys & Input::Key::Fire6) {
+            m_game->getMusic()->playNext();
+            if (!title->isVisible()) {
+                m_game->delay(150);
+            }
+        } else if (keys & Input::Key::Start && !m_game->isEnded() && !title->isVisible()) {
+            if (m_game->isPaused()) {
+                resume();
+            } else if (!m_game->isPaused()) {
+                pause();
+            }
         }
     }
 
@@ -202,4 +231,3 @@ bool Ui::onInput(Input::Player *players) {
 Ui::~Ui() {
     delete (font);
 }
-

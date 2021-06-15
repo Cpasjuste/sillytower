@@ -39,7 +39,19 @@ public:
 
     ~Game() override;
 
-    void start();
+    void pause();
+
+    void resume();
+
+    void restart();
+
+    bool isPaused() const {
+        return paused;
+    };
+
+    bool isEnded() const {
+        return ended;
+    }
 
     Cube *spawnCube(float y = 0);
 
@@ -53,15 +65,15 @@ public:
         cube = c;
     }
 
-    int getCubeMinWidth() {
+    int getCubeMinWidth() const {
         return (int) ((float) CUBE_MIN_WIDTH * m_scaling.x);
     }
 
-    int getCubeMaxWidth() {
+    int getCubeMaxWidth() const {
         return (int) ((float) CUBE_MAX_WIDTH * m_scaling.x);
     }
 
-    int getCubeHeight() {
+    int getCubeHeight() const {
         return (int) ((float) CUBE_HEIGHT * m_scaling.y);
     }
 
@@ -124,6 +136,14 @@ public:
         return m_scaling;
     }
 
+    void quit() {
+        m_quit = true;
+    }
+
+    bool shouldQuit() {
+        return m_quit;
+    }
+
 private:
 
     void onUpdate() override;
@@ -155,6 +175,9 @@ private:
     int staticMultiplier = Utility::random(STATIC_CUBE_MULTIPLIER - 5, STATIC_CUBE_MULTIPLIER + 5);
     int explodingMultiplier = Utility::random(EXPLODING_CUBE_MULTIPLIER - 5, EXPLODING_CUBE_MULTIPLIER + 5);
     int birdMultiplier = Utility::random(BIRD_SPAWN_MULTIPLIER - 5, BIRD_SPAWN_MULTIPLIER + 5);
+    bool paused = true;
+    bool ended = false;
+    bool m_quit = false;
 
     // camera
     TweenScale *cameraScaleTween;

@@ -17,6 +17,8 @@ class Game;
 
 class UiTopPlayers;
 
+class UiPauseMenu;
+
 class UiMusic;
 
 class Ui : public Rectangle {
@@ -37,6 +39,10 @@ public:
     void showBonusText(const Vector2f &pos, const std::string &text);
 
     void showMusicPlayer(const std::string &name, const std::string &author);
+
+    void pause();
+
+    void resume();
 
     Game *getGame() {
         return m_game;
@@ -63,10 +69,10 @@ private:
     TweenAlpha *fadeTween;
     bool gameStarted = false;
     int buttonPressCount = 0;
-
+    // pause menu
+    UiPauseMenu *pauseMenu;
     // top players
     UiTopPlayers *topPlayers;
-
     // music ui
     UiMusic *uiMusic;
 
