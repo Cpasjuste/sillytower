@@ -218,10 +218,13 @@ bool Ui::onInput(Input::Player *players) {
                 inputClock.restart();
             }
         } else if (keys & Input::Key::Start && !m_game->isEnded() && !title->isVisible()) {
-            if (m_game->isPaused()) {
-                resume();
-            } else if (!m_game->isPaused()) {
-                pause();
+            if (inputClock.getElapsedTime().asSeconds() > 0.2f) {
+                if (m_game->isPaused()) {
+                    resume();
+                } else if (!m_game->isPaused()) {
+                    pause();
+                }
+                inputClock.restart();
             }
         }
     }
