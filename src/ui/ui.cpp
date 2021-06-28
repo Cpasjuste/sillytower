@@ -208,14 +208,14 @@ bool Ui::onInput(Input::Player *players) {
             m_game->restart();
             m_game->getInput()->setRepeatDelay(0);
         } else if (keys & Input::Key::Fire5) {
-            m_game->getMusic()->playPrev();
-            if (!title->isVisible()) {
-                m_game->delay(150);
+            if (inputClock.getElapsedTime().asSeconds() > 1) {
+                m_game->getMusic()->playPrev();
+                inputClock.restart();
             }
         } else if (keys & Input::Key::Fire6) {
-            m_game->getMusic()->playNext();
-            if (!title->isVisible()) {
-                m_game->delay(150);
+            if (inputClock.getElapsedTime().asSeconds() > 1) {
+                m_game->getMusic()->playNext();
+                inputClock.restart();
             }
         } else if (keys & Input::Key::Start && !m_game->isEnded() && !title->isVisible()) {
             if (m_game->isPaused()) {

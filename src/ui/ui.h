@@ -75,6 +75,7 @@ private:
     UiTopPlayers *topPlayers;
     // music ui
     UiMusic *uiMusic;
+    C2DClock inputClock;
 
     // splashes
     C2DClock splashClock;
