@@ -141,7 +141,9 @@ void Game::BeginContact(b2Contact *contact) {
     // check for ground collisions
     if (body1 == floor || body2 == floor) {
         if (body1 != firstCube && body2 != firstCube && body1 != secondCube && body2 != secondCube) {
-            if (!secondCube) {
+            if (!firstCube) {
+                firstCube = body1 == floor ? body2 : body1;
+            } else if (!secondCube) {
                 secondCube = body1 == floor ? body2 : body1;
             } else {
                 pause();
@@ -160,7 +162,6 @@ void Game::BeginContact(b2Contact *contact) {
 }
 
 Cube *Game::spawnCube(float y) {
-
     if (cube) {
         // "camera" zoom effect
         float screenTop = getSize().y / gameView->getScale().y;
@@ -185,6 +186,11 @@ Cube *Game::spawnCube(float y) {
                     Vector2f pos = {c->getPosition().x + c->getSize().x / 2, c->getPosition().y + c->getSize().y / 2};
                     world->add(new Explosion(smokeSpriteSheet, pos));
                     cubes.erase(std::remove(cubes.begin(), cubes.end(), c), cubes.end());
+                    if (c->getPhysicsBody() == firstCube) {
+                        firstCube = nullptr;
+                    } else if (c->getPhysicsBody() == secondCube) {
+                        secondCube = nullptr;
+                    }
                     delete (c);
                 }
                 if (b2 != cube->getPhysicsBody() && b2->GetUserData().pointer != 0) {
@@ -192,6 +198,11 @@ Cube *Game::spawnCube(float y) {
                     Vector2f pos = {c->getPosition().x + c->getSize().x / 2, c->getPosition().y + c->getSize().y / 2};
                     world->add(new Explosion(smokeSpriteSheet, pos));
                     cubes.erase(std::remove(cubes.begin(), cubes.end(), c), cubes.end());
+                    if (c->getPhysicsBody() == firstCube) {
+                        firstCube = nullptr;
+                    } else if (c->getPhysicsBody() == secondCube) {
+                        secondCube = nullptr;
+                    }
                     delete (c);
                 }
             }
