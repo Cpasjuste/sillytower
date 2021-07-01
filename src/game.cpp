@@ -220,7 +220,6 @@ Cube *Game::spawnCube(float y) {
     cubes.push_back(c);
     score++;
 
-    explodingMultiplier = 3;
     if (st::Utility::isMultipleOf(score, staticMultiplier)) {
         // set cube to static every ~20 cubes
         staticMultiplier = Utility::random(STATIC_CUBE_MULTIPLIER - 5, STATIC_CUBE_MULTIPLIER + 5);
@@ -238,7 +237,6 @@ Cube *Game::spawnCube(float y) {
         bird = new Bird(this, birdSpriteSheet);
         world->add(bird);
     }
-    explodingMultiplier = 3;
 
     if (ui) {
         ui->setScore(getScore());
