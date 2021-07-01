@@ -55,7 +55,7 @@ public:
 
     Cube *spawnCube(float y = 0);
 
-    void removeCube();
+    void removeCube(Cube *c);
 
     Cube *getCube() {
         return cube;

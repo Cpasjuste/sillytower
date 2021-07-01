@@ -51,7 +51,7 @@ void Bird::onUpdate() {
     Cube *cube = m_game->getCube();
     if (cube && cube->getGlobalBounds().intersects(getGlobalBounds())) {
         // remove cube
-        m_game->removeCube();
+        m_game->removeCube(m_game->getCube());
         Cube *c = m_game->spawnCube();
         m_game->setCube(c);
         removePhysicsBody();

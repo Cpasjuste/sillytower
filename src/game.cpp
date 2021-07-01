@@ -116,6 +116,7 @@ void Game::restart() {
     cube = nullptr;
     firstCube = secondCube = nullptr;
     score = 0;
+    needSpawn = false;
     cube = spawnCube(getSize().y);
     firstCube = cube->getPhysicsBody();
 
@@ -138,6 +139,16 @@ void Game::BeginContact(b2Contact *contact) {
     b2Body *body1 = contact->GetFixtureA()->GetBody();
     b2Body *body2 = contact->GetFixtureB()->GetBody();
 
+    if (cube) {
+        if (body1 == cube->getPhysicsBody() || body2 == cube->getPhysicsBody()) {
+            cube->getPhysicsBody()->SetGravityScale(2);
+            needSpawn = true;
+            if (cube->getMode() == Cube::Mode::Exploding) {
+                return;
+            }
+        }
+    }
+
     // check for ground collisions
     if (body1 == floor || body2 == floor) {
         if (body1 != firstCube && body2 != firstCube && body1 != secondCube && body2 != secondCube) {
@@ -150,13 +161,6 @@ void Game::BeginContact(b2Contact *contact) {
                 ended = true;
                 ui->showGameOver();
             }
-        }
-    }
-
-    if (cube) {
-        if (body1 == cube->getPhysicsBody() || body2 == cube->getPhysicsBody()) {
-            cube->getPhysicsBody()->SetGravityScale(2);
-            needSpawn = true;
         }
     }
 }
@@ -183,30 +187,24 @@ Cube *Game::spawnCube(float y) {
                 auto *b2 = edge->contact->GetFixtureB()->GetBody();
                 if (b1 != cube->getPhysicsBody() && b1->GetUserData().pointer != 0) {
                     Cube *c = (Cube *) b1->GetUserData().pointer;
-                    Vector2f pos = {c->getPosition().x + c->getSize().x / 2, c->getPosition().y + c->getSize().y / 2};
-                    world->add(new Explosion(smokeSpriteSheet, pos));
-                    cubes.erase(std::remove(cubes.begin(), cubes.end(), c), cubes.end());
                     if (c->getPhysicsBody() == firstCube) {
                         firstCube = nullptr;
                     } else if (c->getPhysicsBody() == secondCube) {
                         secondCube = nullptr;
                     }
-                    delete (c);
+                    removeCube(c);
                 }
                 if (b2 != cube->getPhysicsBody() && b2->GetUserData().pointer != 0) {
                     Cube *c = (Cube *) b2->GetUserData().pointer;
-                    Vector2f pos = {c->getPosition().x + c->getSize().x / 2, c->getPosition().y + c->getSize().y / 2};
-                    world->add(new Explosion(smokeSpriteSheet, pos));
-                    cubes.erase(std::remove(cubes.begin(), cubes.end(), c), cubes.end());
                     if (c->getPhysicsBody() == firstCube) {
                         firstCube = nullptr;
                     } else if (c->getPhysicsBody() == secondCube) {
                         secondCube = nullptr;
                     }
-                    delete (c);
+                    removeCube(c);
                 }
             }
-            removeCube();
+            removeCube(cube);
         }
     }
 
@@ -222,6 +220,7 @@ Cube *Game::spawnCube(float y) {
     cubes.push_back(c);
     score++;
 
+    explodingMultiplier = 3;
     if (st::Utility::isMultipleOf(score, staticMultiplier)) {
         // set cube to static every ~20 cubes
         staticMultiplier = Utility::random(STATIC_CUBE_MULTIPLIER - 5, STATIC_CUBE_MULTIPLIER + 5);
@@ -239,6 +238,7 @@ Cube *Game::spawnCube(float y) {
         bird = new Bird(this, birdSpriteSheet);
         world->add(bird);
     }
+    explodingMultiplier = 3;
 
     if (ui) {
         ui->setScore(getScore());
@@ -247,11 +247,16 @@ Cube *Game::spawnCube(float y) {
     return c;
 }
 
-void Game::removeCube() {
-    if (cube) {
-        cubes.erase(std::remove(cubes.begin(), cubes.end(), cube), cubes.end());
-        delete (cube);
-        cube = nullptr;
+void Game::removeCube(Cube *c) {
+    if (c) {
+        Vector2f pos = {c->getPosition().x + c->getSize().x / 2,
+                        c->getPosition().y + c->getSize().y / 2};
+        world->add(new Explosion(smokeSpriteSheet, pos));
+        cubes.erase(std::remove(cubes.begin(), cubes.end(), c), cubes.end());
+        delete (c);
+        if (c == cube) {
+            cube = nullptr;
+        }
     }
 }
 
