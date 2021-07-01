@@ -28,7 +28,7 @@ project(SillyTower)
 
 # pplay version
 set(VERSION_MAJOR "1")
-set(VERSION_MINOR "2")
+set(VERSION_MINOR "3")
 set(PROJECT_AUTHOR "Cpasjuste")
 set(TITLE_ID "STOWE0001")
 
